@@ -3,11 +3,11 @@
 
 \begin{document}
 
-\title{Project Proposal:  Something}
+\title{Project Proposal:\\Matrix Profile MPI Implementation}
 
 \author{\IEEEauthorblockN{Richard McNew\IEEEauthorrefmark{1}, Brody Larsen\IEEEauthorrefmark{2}, Feyisa Berisa\IEEEauthorrefmark{3} and Hugh Harps\IEEEauthorrefmark{4}}
 \IEEEauthorblockA{Department of Computer Science, Utah State University\\ Logan, Utah, USA\\
-\IEEEauthorrefmark{1}a02077329@usu.edu, \IEEEauthorrefmark{2}brody-anum@usu.edu, \IEEEauthorrefmark{3}feyisa-anum@usu.edu, \IEEEauthorrefmark{4}hugh-anum@usu.edu}
+\IEEEauthorrefmark{1}a02077329@usu.edu, \IEEEauthorrefmark{2}brody.larsen@hotmail.com, \IEEEauthorrefmark{3}feyisa-anum@usu.edu, \IEEEauthorrefmark{4}hugh-anum@usu.edu}
 }
 
 
@@ -21,33 +21,51 @@
 %\end{IEEEkeywords}
 
 \section{Project Thesis}
-A brief introduction, including a concise, unambiguous, single-sentence thesis statement that is provable within the scope of the project.
+Time series data is a collection of observations made sequentially in time.  Time series data is ubiquitous in our modern world and takes the form of sensor data, stock market data, network metrics, application logs, and many other forms.  Analyzing time series data is essential to understanding what is happening and enables informed decision-making, planning, and strategy.  One recent tool in time series data analysis is the Matrix Profile.  This project will create an MPI implementation of the Matrix Profile in C++.
+
 
 \section{Project Details}
 A more detailed description, including a description of the tests you intend to run, and your anticipated results.
 
+The Matrix Profile \cite{MatrixProfile1} \cite{MatrixProfile2} is an amazing data structure and set of accompanying algorithms that annotate a time series and make most time series data mining problems easy to solve. The Matrix Profile is:  1) exact - it allows for time series analysis without false positives or false negatives, 2) parameter-free - unlike many time series data analysis tools, no hyperparameter tuning is needed, 3) space efficient - a matrix profile data structure does not require much space, enabling large datasets to be processed in memory, 4) parallelizable - it is fast to compute on modern hardware, and 5) simple - it is easy to use and fairly easy to understand.  
+
+Most data science work is done in Python.  As a result, most Matrix Profile implementations in use today are written in Python \cite{Stumpy} and rely on the NumPy, SciPy, and Numba Python libraries for vector and matrix data types, numerical and scientific algorithms, and fast just-in-time optimizations.  Creating a Matrix Profile implementation using MPI in C++ will offer organizations that use MPI a way to use the Matrix Profile. 
+
 \section{Tests}
+In order to validate the proposed MPI implementation of Matrix Profile in C++ a test suite would need to be created.  The test suite will be created by finding or creating input time series data, running one or more Python Matrix Profile implementations against the input time series data, and capturing the output Matrix Profile data structures.  The MPI Matrix Profile implementation will be validated as correct if the output Matrix Profile data structures match those created by the Python Matrix Profile implementations. 
 
 \section{Anticipated Results}
+The MPI-based Matrix Profile implementation will produce the same results as Python-based Matrix Profile implementations and will work in MPI environments.
 
 \section{Project Management System}
-The project management system you intend to use (e.g., Trello, GIT Projects, etc.)
+TODO:  Tentative ideas are:
+
+Group 010 will use git for version control of all source code, configuration, documentation, and report source documents.  
+
+GitHub will be used to host a shared git repository, provide access control, manage pull requests and merges, and provide detailed tracking of issues.
+
+Trello will be used for sprint planning, story point tracking, backlog tracking, task assignments, and burndown chart generation. 
 
 \section{Meeting Plan}
-Your meeting plan (mode of holding meetings, frequency, etc.)
+TODO: Your meeting plan (mode of holding meetings, frequency, etc.)
 
 \section{Proposal Groomed List of Tasks}
-A groomed list of tasks accomplished for the proposal, who worked on it, and the corresponding story points.
+TODO: A groomed list of tasks accomplished for the proposal, who worked on it, and the corresponding story points.
 
 \section{Proposal Burndown Chart}
-A burndown chart of the tasks accomplished for the project proposal
+TODO: A burndown chart of the tasks accomplished for the project proposal
 
-\section{Conclusion}
 
 \bibliographystyle{IEEEtran}
 
 % number is the number of reference labels
-\begin{thebibliography}{1}  
+\begin{thebibliography}{4}  
+
+\bibitem{MatrixProfile1} Yeh, Chin-Chia Michael, et al. (2016) Matrix Profile I: All Pairs Similarity Joins for Time Series: A Unifying View that Includes Motifs, Discords, and Shapelets. ICDM:1317-1322.
+
+\bibitem{MatrixProfile2} Zhu, Yan, et al. (2016) Matrix Profile II: Exploiting a Novel Algorithm and GPUs to Break the One Hundred Million Barrier for Time Series Motifs and Joins. ICDM:739-748.
+
+\bibitem{Stumpy} S.M. Law, (2019). STUMPY: A Powerful and Scalable Python Library for Time Series Data Mining. Journal of Open Source Software, 4(39), 1504.
 
 \bibitem{Pacheco} Pacheco, P. \emph{Parallel Programming with MPI}, Morgan Kaufmann; 1st edition (October 15, 1996), ISBN: 978-1558603394.
 
