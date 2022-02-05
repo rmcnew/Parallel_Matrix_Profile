@@ -41,7 +41,7 @@ jobs:
       
     - name: Install mpich for MacOS
       if: matrix.os == 'macos-latest'
-      run: sudo brew install mpich
+      run: brew install mpich
       
     - name: Install mpich for Windows, first download MS-MPI
       if: matrix.os == 'windows-latest'
