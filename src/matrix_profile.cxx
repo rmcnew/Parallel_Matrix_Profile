@@ -1,6 +1,7 @@
 #include <mpi.h>
 #include <chrono>
 #include <cstdarg>
+#include <cstdlib>
 #include <cstdio>
 #include <queue>
 #include <sstream>
