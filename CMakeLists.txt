@@ -38,19 +38,19 @@ enable_testing()
 ########### programs ###########
 
 # add the executable
-add_executable(mpi_hello src/mpi_hello.cxx)
+add_executable(matrix_profile src/matrix_profile.cxx)
 
 # needed include paths
-target_include_directories(mpi_hello PUBLIC ${MPI_CXX_INCLUDE_PATH})
+target_include_directories(matrix_profile PUBLIC ${MPI_CXX_INCLUDE_PATH})
 
 # compile options
-target_compile_options(mpi_hello PUBLIC ${MPI_CXX_COMPILE_FLAGS})  
+target_compile_options(matrix_profile PUBLIC ${MPI_CXX_COMPILE_FLAGS})  
 
 # link libraries
-target_link_libraries(mpi_hello PUBLIC ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS})
+target_link_libraries(matrix_profile PUBLIC ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS})
 
 # mpirun target
-add_custom_target(run COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPI_NUMBER_OF_PROCESSORS} ${CMAKE_CURRENT_BINARY_DIR}/mpi_hello) 
+add_custom_target(run COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPI_NUMBER_OF_PROCESSORS} ${CMAKE_CURRENT_BINARY_DIR}/matrix_profile) 
 
 
 ########### tests ###########
