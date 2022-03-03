@@ -185,7 +185,7 @@ void initialize_MPI(int argc, char* argv[]) {
 }
 
 void initialize_prng() {
-	srandom(static_cast<unsigned>(time(NULL)));
+	srand(static_cast<unsigned>(time(NULL)));
 }
 
 int main(int argc, char** argv) {
