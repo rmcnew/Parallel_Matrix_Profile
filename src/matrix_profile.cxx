@@ -3,6 +3,7 @@
 #include <cstdarg>
 #include <cstdlib>
 #include <cstdio>
+//#include <filesystem>  // it looks like linking this library could be problematic
 #include <queue>
 #include <sstream>
 #include <string>
@@ -20,12 +21,22 @@
 int rank;
 int process_count;    
 
-std::string input_filename;
-std::string output_filename;
+std::string input_file;
+std::string output_file;
+
+std::string window_size_str;
+int window_size = 10;
+
+std::string input_column_str;
+int input_column = 1;
 
 std::FILE* log_handle = nullptr;
-std::FILE* input_handle = nullptr;
-std::FILE* output_handle = nullptr;
+
+double* time_series = nullptr;
+long time_series_length = 0;
+
+double* distance_profile = nullptr;
+double* matrix_profile = nullptr;
 
 
 // Globals for sending and receiving
@@ -53,35 +64,50 @@ std::chrono::time_point<std::chrono::high_resolution_clock> overall_stop;
 // Print usage help
 void print_usage() {
 	if (rank == LEADER) {
-		printf("\n\nUsage: mpirun -n <PROCESS_COUNT> -f <hostfile> ./matrix_profile -i <INPUT_FILE.CSV> -o <OUTPUT_FILE.CSV\n");
+		printf("\n\nUsage: mpirun -n <PROCESS_COUNT> -f <hostfile> ./matrix_profile --input-file <INPUT_FILE.CSV> --output-file <OUTPUT_FILE.CSV> [--window-size WINDOW_SIZE] [--input-column INPUT_COLUMN]\n");
 	}
 }
 
-// Extract method from command line arg
+
 void parse_command_line_args(std::vector<std::string> args) {    
 	for (auto arg = args.begin(); arg != args.end(); arg++) {
         if (*arg == "-h" || *arg == "--help") {
             print_usage();
 			MPI_Finalize();
 			exit(EXIT_SUCCESS);
-        } else if (*arg == "-i") {
-    		// get input_filename
+        } else if (*arg == "--input-file") { 
 			arg++;
-            input_filename = *arg;
-        } else if (*arg == "-o") {
-    		// get output_filename
+            input_file = *arg;
+        } else if (*arg == "--output-file") { 
 			arg++;
-            output_filename = *arg;
+            output_file = *arg;
+        } else if (*arg == "--window-size") {
+            arg++;
+            window_size_str = *arg;
+        } else if (*arg == "--input-column") {
+            arg++;
+            input_column_str = *arg;
         }
     }
 }
 
-// Ensure that seconds_to_run is positive
+
 void validate_command_line_args() {
     bool valid = true;
-	// check that input_filename exists and can be read
+	// check that input_file exists and can be read
+    /*
+    if (!std::filesystem::exists(input_file)) {
+        valid = false;
+        if (rank == LEADER) {
+            fprintf(stderr, "Cannot find input file: %s\n", input_file.c_str());
+        }
+    }
+    */
+    // output_file
 
-    // check that output_filename can be opened for writing
+    // if present, window_size must be positive
+
+    // if present, input_column must be positive
 
 	// if invalid, print usage and exit 	
     if (!valid) {
@@ -90,7 +116,7 @@ void validate_command_line_args() {
         exit(EXIT_FAILURE);
     }
     if (rank == LEADER) {
-        printf("Running with %d processes\nUsing input_file: %s and output_file: %s\n", process_count, input_filename.c_str(), output_filename.c_str());
+        printf("Running with %d processes\nUsing input_file: %s and output_file: %s\nUsing window_size: %d and input_column: %d\n", process_count, input_file.c_str(), output_file.c_str(), window_size, input_column);
     }
 }
 
@@ -187,6 +213,35 @@ void initialize_MPI(int argc, char* argv[]) {
 void initialize_prng() {
 	srand(static_cast<unsigned>(time(NULL)));
 }
+
+// RSM:  should we do it this way or get a CSV library?
+// I think a CSV library should be used.  Need to find a good one.
+/*
+void read_time_series() {
+    std::vector<double> time_series_vect;
+
+    std::FILE* input_handle = std::fopen(input_file, "r");
+    if (input_handle == nullptr) {
+        std::fprintf(stderr, "Could not open %s for reading!\n", input_file.c_str()); 
+    } else {
+        int count = 0;
+        double current
+
+        while ((count = fscanf(input_handle, "%f\n", &current)) > 0) {
+            // read in the requested column from the CSV input
+            time_series_vect.push_back(current);
+        }
+        std::fclose(input_handle);
+
+    }
+    time_series_length = time_series_vect.size();
+    time_series = (double*) calloc(time_series_length, sizeof(double));
+    for (int i = 0; i < time_series_length; i++) {
+        time_series[i] = time_series_vect[i];
+    }
+}
+*/
+
 
 int main(int argc, char** argv) {
     std::vector<std::string> args(argv + 1, argv + argc);
