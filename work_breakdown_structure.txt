@@ -1,0 +1,104 @@
+Tasks that need to get done for Matrix Profile:
+
+Read in time series CSV
+  - Get CSV parser library
+  - Add to CMake build
+  - Add unit test to make sure it works
+  - put time series data in double array
+  - MPI_Bcast double array to all processes
+  - MPI_Bcast window_size to all processes
+
+Each process works on a portion of the time series double array:
+  - Divide time series double array into process_count sections
+  - Each process calculates distance profiles and indicies and for its section and sends the calculated distance profile and indices to LEADER (rank 0) process.   This is a single MPI_Isend at the end of the calculation.  After a non-LEADER process has completed the distance profile calculation and sent the data for its section, it exits.
+  - After the LEADER process has received a distance profile from each non-LEADER process, it does an element-wise minimum to update the overall matrix profile. After the data has been received from each process, the LEADER process writes the matrix profile to the output file and exits.
+
+These are the steps to implement the STAMP (Scalable Time series Anytime Matrix Profile) algorithm described in:  https://www.cs.ucr.edu/~eamonn/PID4481997_extend_Matrix%20Profile_I.pdf   Note that we are doing the "self-similarity join" meaning that we are comparing the input time series against itself.
+
+In order to implement STAMP, we need to calculate a SlidingDotProduct:
+
+
+// This is from TABLE 1 in the Matrix Profile 1 paper
+// Input:  A query_segment (part of the time_series that is window_size in length), and the whole time_series
+// Output:  The dot product between the query_segment and all subsequences of the time_series
+double* SlidingDotProduct(double* query_segment, double* time_series) {
+
+    // Step 1
+    // n = length(time_series)
+    // m = length(query_segment)
+    // matrix_profile_length = n - m + 1;
+
+    // Step 2
+    // appended_time_series = copy time_series and append n zeros
+
+    // Step 3
+    // reversed_query_segment = reverse(query_segment)
+
+    // Step 4
+    // appended_query_segment = copy reversed_query_segment and append (2n - m) zeros
+
+    // Step 5
+    // transformed_query_segment = fast_fourier_transform(appended_query_segment)
+    // transformed_time_series = fast_fourier_transform(appended_time_series)
+
+    // Step 6
+    // transformed_dot_product = element_wise_multiply(transformed_query_segment, transformed_time_series)
+    // dot_product = inverse_fast_fourier_transform(transformed_dot_product)
+
+    // Step 7
+    // return dot_product
+}
+
+The fast_fourier_transform and inverse_fast_fourier_transform will need to come from an external library.
+
+
+We also need to compute the mean and standard deviation for the query_segment and time_series.  The paper “Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping” shows a fast way to do this.  This is referenced in TABLE 2 in the Matrix Profile 1 paper (reference number 22).
+
+void compute_mean_and_standard_deviation(double* query_segment, double* time_series, double* query_segment_mean, double* query_segment_standard_deviation, double* time_series_window_mean, double* time_series_window_standard_deviation) {
+
+    // Read paper and put procedure here
+}
+
+
+double* calculate_distance_profile(double* query_segment, double* time_series, double* dot_product, double query_segment_mean, double query_segment_standard_deviation, double time_series_window_mean, double time_series_window_standard_deviation) {
+
+    // double* distance_profile = (double*) calloc(matrix_profile_length, sizeof(double));
+    // for(int i = 0; i < matrix_profile_length; i++) {
+    //     distance_profile[i] = std::sqrt(2*m * (1 - ((dot_product[i] - m * query_segment_mean * time_series_window_mean) / (m * query_segment_standard_deviation * time_series_window_standard_deviation)))); 
+    // }
+    // return distance_profile;
+}
+
+
+// MASS from TABLE 2
+// Input:  A query_segment (part of the time_series that is window_size in length), and the whole time_series
+// Output:  A distance_profile for the query_segment
+double* mueen_similarity_search(double* query_segment, double* time_series) {
+
+    // Step 1
+    // Compute SlidingDotProduct
+    // double* dot_product = SlidingDotProduct(query_segment, time_series);
+
+    // Step 2
+    // Compute Means and Standard Deviations
+    // double query_segment_mean;
+    // double query_segment_standard_deviation;
+    // double time_series_window_mean;
+    // double time_series_window_standard_deviation;
+    // compute_mean_and_standard_deviation(query_segment, time_series, &query_segment_mean, &query_segment_standard_deviation, &time_series_window_mean, &time_series_window_standard_deviation);
+
+    // Step 3
+    // Compute Distance Profile
+    // double* distance_profile = calculate_distance_profile(double* query_segment, double* time_series, double* dot_product, double query_segment_mean, double query_segment_standard_deviation, double time_series_window_mean, double time_series_window_standard_deviation);
+
+    // Step 4
+    // return distance_profile;
+}
+
+// STAMP from TABLE 3
+// Input:  time_series and window_size
+// Output:  matrix_profile and matrix_profile_index
+void stamp(double* time_series, int window_size, double* matrix_profile, double* matrix_profile_index) {
+
+    // STAMP steps here
+}
