@@ -20,15 +20,23 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+# FFTW3
+FetchContent_Declare(
+    fftw3
+    URL https://www.fftw.org/fftw-3.3.10.tar.gz
+)
+FetchContent_MakeAvailable(fftw3)
+
 # get MPI support package
 find_package(MPI REQUIRED)
 
+
 ## uncomment to print all defined variables (useful for debugging)
-#get_cmake_property(_variableNames VARIABLES)
-#list (SORT _variableNames)
-#foreach (_variableName ${_variableNames})
-#    message(STATUS "${_variableName}=${${_variableName}}")
-#endforeach()
+get_cmake_property(_variableNames VARIABLES)
+list (SORT _variableNames)
+foreach (_variableName ${_variableNames})
+    message(STATUS "${_variableName}=${${_variableName}}")
+endforeach()
 
 #message(STATUS "Run: ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPI_NUMBER_OF_PROCESSORS} EXECUTABLE ARGS")
 
@@ -58,8 +66,14 @@ add_custom_target(run COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MP
 # add test executables
 add_executable(hello_test tests/hello_test.cxx)
 target_link_libraries(hello_test gtest_main)
+
+add_executable(fftw_test tests/fftw_test.cxx)
+target_include_directories(fftw_test PUBLIC ${fftw3_SOURCE_DIR}/api)
+target_link_libraries(fftw_test gtest_main fftw3)
+
 include(GoogleTest)
 gtest_discover_tests(hello_test)
+gtest_discover_tests(fftw_test)
 
 
 
