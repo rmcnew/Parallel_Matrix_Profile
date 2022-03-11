@@ -24,10 +24,9 @@ FetchContent_MakeAvailable(googletest)
 FetchContent_Declare(
     fftw3
     URL https://www.fftw.org/fftw-3.3.10.tar.gz
+    URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
+    CMAKE_CACHE_ARGS -DCMAKE_C_FLAGS:STRING=$<$<BOOL:WIN32>:-DFFTW_ENABLE_ALLOCA=0 -DWITH_OUR_MALLOC=1 -DHAVE_SSE2=1 -DHAVE_AVX=1 -DHAVE_AVX2=1>
 )
-if (WIN32)
-    target_compile_options(fftw3 PUBLIC --disable-alloca --with-our-malloc16 --enable-shared --disable-static --enable-threads --with-combined-threads --enable-portable-binary --with-incoming-stack-boundary=2 --enable-sse2 --enable-avx --enable-avx2)
-endif (WIN32)
 FetchContent_MakeAvailable(fftw3)
 
 # get MPI support package
