@@ -20,8 +20,18 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+# FFTW3
+FetchContent_Declare(
+    fftw3
+    URL https://www.fftw.org/fftw-3.3.10.tar.gz
+    URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
+    CMAKE_CACHE_ARGS -DCMAKE_C_FLAGS:STRING=$<$<BOOL:WIN32>:-DFFTW_ENABLE_ALLOCA=0 -DWITH_OUR_MALLOC=1 -DHAVE_SSE2=1 -DHAVE_AVX=1 -DHAVE_AVX2=1 -Wl,-Bdynamic>
+)
+FetchContent_MakeAvailable(fftw3)
+
 # get MPI support package
 find_package(MPI REQUIRED)
+
 
 ## uncomment to print all defined variables (useful for debugging)
 #get_cmake_property(_variableNames VARIABLES)
@@ -47,6 +57,10 @@ target_include_directories(matrix_profile PUBLIC ${MPI_CXX_INCLUDE_PATH})
 target_compile_options(matrix_profile PUBLIC ${MPI_CXX_COMPILE_FLAGS})  
 
 # link libraries
+if(MINGW)
+    set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ ${CMAKE_CXX_STANDARD_LIBRARIES}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
+endif()
 target_link_libraries(matrix_profile PUBLIC ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS})
 
 # mpirun target
@@ -58,8 +72,22 @@ add_custom_target(run COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MP
 # add test executables
 add_executable(hello_test tests/hello_test.cxx)
 target_link_libraries(hello_test gtest_main)
+
+add_executable(fftw_test tests/fftw_test.cxx)
+target_include_directories(fftw_test PUBLIC ${fftw3_SOURCE_DIR}/api)
+target_link_libraries(fftw_test fftw3 gtest_main)
+if(MINGW)
+    # copy the FFTW3 dll to the executables directory
+    # so the executables and tests can find it
+    add_custom_command(TARGET fftw_test POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${fftw3_BINARY_DIR}/libfftw3.dll"
+        "${CMAKE_CURRENT_BINARY_DIR}")
+endif()
+
 include(GoogleTest)
 gtest_discover_tests(hello_test)
+gtest_discover_tests(fftw_test)
 
 
 
