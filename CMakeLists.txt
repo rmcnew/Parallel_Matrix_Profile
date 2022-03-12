@@ -46,9 +46,14 @@ find_package(MPI REQUIRED)
 enable_testing()
 
 ########### programs ###########
+set(MATRIX_PROFILE_SOURCE_DIR "${PROJECT_SOURCE_DIR}/src")
+file(GLOB matrix_profile_SRC
+    "${MATRIX_PROFILE_SOURCE_DIR}/*.h"
+    "${MATRIX_PROFILE_SOURCE_DIR}/*.cxx"
+)
 
 # add the executable
-add_executable(matrix_profile src/matrix_profile.cxx)
+add_executable(matrix_profile ${matrix_profile_SRC})
 
 # needed include paths
 target_include_directories(matrix_profile PUBLIC ${MPI_CXX_INCLUDE_PATH})
@@ -69,7 +74,8 @@ add_custom_target(run COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MP
 
 ########### tests ###########
 
-# add test executables
+### test executables ###
+# sanity tests for external dependencies
 add_executable(hello_test tests/hello_test.cxx)
 target_link_libraries(hello_test gtest_main)
 
@@ -85,12 +91,25 @@ if(MINGW)
         "${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
+# tests for matrix_profile components
+add_executable(timing_test tests/timing_test.cxx src/timing.cxx)
+target_include_directories(timing_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
+target_link_libraries(timing_test gtest_main)
+
+add_executable(log_test tests/log_test.cxx src/timing.cxx src/log.cxx)
+target_include_directories(log_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
+target_link_libraries(log_test gtest_main)
+
+add_executable(read_time_series_csv_test tests/read_time_series_csv_test.cxx src/read_time_series_csv.cxx)
+target_include_directories(read_time_series_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
+target_link_libraries(read_time_series_csv_test gtest_main)
+
+
 include(GoogleTest)
 gtest_discover_tests(hello_test)
 gtest_discover_tests(fftw_test)
-
-
-
-                
+gtest_discover_tests(timing_test)
+gtest_discover_tests(log_test)
+gtest_discover_tests(read_time_series_csv_test)              
 
 
