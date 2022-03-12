@@ -56,7 +56,7 @@ file(GLOB matrix_profile_SRC
 add_executable(matrix_profile ${matrix_profile_SRC})
 
 # needed include paths
-target_include_directories(matrix_profile PUBLIC ${MPI_CXX_INCLUDE_PATH})
+target_include_directories(matrix_profile PUBLIC ${MPI_CXX_INCLUDE_PATH} ${fftw3_SOURCE_DIR}/api)
 
 # compile options
 target_compile_options(matrix_profile PUBLIC ${MPI_CXX_COMPILE_FLAGS})  
@@ -66,7 +66,7 @@ if(MINGW)
     set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ ${CMAKE_CXX_STANDARD_LIBRARIES}")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
 endif()
-target_link_libraries(matrix_profile PUBLIC ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS})
+target_link_libraries(matrix_profile PUBLIC fftw3 ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS})
 
 # mpirun target
 add_custom_target(run COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPI_NUMBER_OF_PROCESSORS} ${CMAKE_CURRENT_BINARY_DIR}/matrix_profile) 
@@ -104,6 +104,23 @@ add_executable(read_time_series_csv_test tests/read_time_series_csv_test.cxx src
 target_include_directories(read_time_series_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
 target_link_libraries(read_time_series_csv_test gtest_main)
 
+add_executable(write_matrix_profile_csv_test tests/write_matrix_profile_csv_test.cxx src/write_matrix_profile_csv.cxx)
+target_include_directories(write_matrix_profile_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
+target_link_libraries(write_matrix_profile_csv_test gtest_main)
+
+add_executable(command_line_args_test tests/command_line_args_test.cxx src/command_line_args.cxx)
+target_include_directories(command_line_args_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${MPI_CXX_INCLUDE_PATH})
+target_compile_options(command_line_args_test PUBLIC ${MPI_CXX_COMPILE_FLAGS})  
+target_link_libraries(command_line_args_test PUBLIC ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} gtest_main)
+
+add_executable(fourier_transform_test tests/fourier_transform_test.cxx src/fourier_transform.cxx)
+target_include_directories(fourier_transform_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
+target_link_libraries(fourier_transform_test fftw3 gtest_main)
+
+add_executable(sliding_dot_product_test tests/sliding_dot_product_test.cxx src/sliding_dot_product.cxx)
+target_include_directories(sliding_dot_product_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
+target_link_libraries(sliding_dot_product_test fftw3 gtest_main)
+
 
 include(GoogleTest)
 gtest_discover_tests(hello_test)
@@ -111,5 +128,8 @@ gtest_discover_tests(fftw_test)
 gtest_discover_tests(timing_test)
 gtest_discover_tests(log_test)
 gtest_discover_tests(read_time_series_csv_test)              
-
+gtest_discover_tests(write_matrix_profile_csv_test)
+gtest_discover_tests(command_line_args_test)
+gtest_discover_tests(fourier_transform_test)
+gtest_discover_tests(sliding_dot_product_test)
 

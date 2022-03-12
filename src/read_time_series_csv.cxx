@@ -3,8 +3,8 @@
 
 
 
-TimeSeries read_time_series_csv_file(std::string input_file, int input_column) {
-    TimeSeries time_series;
+DoubleArray read_time_series_csv_file(std::string input_file, int input_column) {
+    DoubleArray time_series;
 
     // We should use an existing CSV library and wrap it accordingly
 

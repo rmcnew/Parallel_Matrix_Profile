@@ -3,12 +3,10 @@
 
 #include <string>
 
-struct TimeSeries {
-    double* data = nullptr;
-    long length = 0;
-};
+#include "types.h"
 
-TimeSeries read_time_series_csv_file(std::string input_file, int input_column);
+
+DoubleArray read_time_series_csv_file(std::string input_file, int input_column);
 
 
 
