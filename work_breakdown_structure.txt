@@ -58,7 +58,7 @@ double* sliding_dot_product(double* query_segment, double* time_series) {
     // return dot_product
 }
 
-The fast_fourier_transform and inverse_fast_fourier_transform will need to come from an external library (FFTW3?).
+The fast_fourier_transform and inverse_fast_fourier_transform are provided by the FFTW3 library.
 
 
 We also need to compute the mean and standard deviation for the query_segment and time_series.  The paper “Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping” shows a fast way to do this.  This is referenced in TABLE 2 in the Matrix Profile 1 paper (reference number 22).

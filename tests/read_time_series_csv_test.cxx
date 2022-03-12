@@ -6,7 +6,7 @@ TEST(ReadTimeSeriesCsvTest, test_read_time_series_csv) {
     
     /* Test for 
 
-    TimeSeries read_time_series_csv_file(std::string input_file, int input_column);
+    DoubleArray read_time_series_csv_file(std::string input_file, int input_column);
 
     */
 
