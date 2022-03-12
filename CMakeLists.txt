@@ -57,6 +57,10 @@ target_include_directories(matrix_profile PUBLIC ${MPI_CXX_INCLUDE_PATH})
 target_compile_options(matrix_profile PUBLIC ${MPI_CXX_COMPILE_FLAGS})  
 
 # link libraries
+if(MINGW)
+    set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ ${CMAKE_CXX_STANDARD_LIBRARIES}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
+endif()
 target_link_libraries(matrix_profile PUBLIC ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS})
 
 # mpirun target
@@ -71,7 +75,15 @@ target_link_libraries(hello_test gtest_main)
 
 add_executable(fftw_test tests/fftw_test.cxx)
 target_include_directories(fftw_test PUBLIC ${fftw3_SOURCE_DIR}/api)
-target_link_libraries(fftw_test gtest_main fftw3)
+target_link_libraries(fftw_test fftw3 gtest_main)
+if(MINGW)
+    # copy the FFTW3 dll to the executables directory
+    # so the executables and tests can find it
+    add_custom_command(TARGET fftw_test POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${fftw3_BINARY_DIR}/libfftw3.dll"
+        "${CMAKE_CURRENT_BINARY_DIR}")
+endif()
 
 include(GoogleTest)
 gtest_discover_tests(hello_test)
