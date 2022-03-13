@@ -29,6 +29,10 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(fftw3)
 
+# CSV Parser from https://github.com/vincentlaucsb/csv-parser
+add_subdirectory(csv-parser)
+set(CSV_PARSER_SOURCE_DIR "${PROJECT_SOURCE_DIR}/csv-parser")
+
 # get MPI support package
 find_package(MPI REQUIRED)
 
@@ -56,7 +60,7 @@ file(GLOB matrix_profile_SRC
 add_executable(matrix_profile ${matrix_profile_SRC})
 
 # needed include paths
-target_include_directories(matrix_profile PUBLIC ${MPI_CXX_INCLUDE_PATH} ${fftw3_SOURCE_DIR}/api)
+target_include_directories(matrix_profile PUBLIC ${MPI_CXX_INCLUDE_PATH} ${fftw3_SOURCE_DIR}/api ${CSV_PARSER_SOURCE_DIR}/single_include)
 
 # compile options
 target_compile_options(matrix_profile PUBLIC ${MPI_CXX_COMPILE_FLAGS})  
@@ -66,7 +70,7 @@ if(MINGW)
     set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ ${CMAKE_CXX_STANDARD_LIBRARIES}")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
 endif()
-target_link_libraries(matrix_profile PUBLIC fftw3 ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS})
+target_link_libraries(matrix_profile PUBLIC fftw3 ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} csv)
 
 # mpirun target
 add_custom_target(run COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPI_NUMBER_OF_PROCESSORS} ${CMAKE_CURRENT_BINARY_DIR}/matrix_profile) 
@@ -101,8 +105,8 @@ target_include_directories(log_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
 target_link_libraries(log_test gtest_main)
 
 add_executable(read_time_series_csv_test tests/read_time_series_csv_test.cxx src/read_time_series_csv.cxx)
-target_include_directories(read_time_series_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
-target_link_libraries(read_time_series_csv_test gtest_main)
+target_include_directories(read_time_series_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${CSV_PARSER_SOURCE_DIR}/single_include)
+target_link_libraries(read_time_series_csv_test csv gtest_main)
 
 add_executable(write_matrix_profile_csv_test tests/write_matrix_profile_csv_test.cxx src/write_matrix_profile_csv.cxx)
 target_include_directories(write_matrix_profile_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})

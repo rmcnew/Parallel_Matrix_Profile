@@ -2,8 +2,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <mpi.h>
-#include <string>
-#include <vector>
 
 #include "command_line_args.h"
 
