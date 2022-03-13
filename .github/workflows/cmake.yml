@@ -21,11 +21,11 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            compiler: g++-11
+            compiler: g++-17
             target: Linux
             
           - os: macos-latest
-            compiler: g++-11
+            compiler: g++-17
             target: Macos
             
           - os: windows-latest
