@@ -121,6 +121,14 @@ add_executable(sliding_dot_product_test tests/sliding_dot_product_test.cxx src/s
 target_include_directories(sliding_dot_product_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(sliding_dot_product_test fftw3 gtest_main)
 
+add_executable(mean_and_standard_deviation_test tests/mean_and_standard_deviation_test.cxx src/mean_and_standard_deviation.cxx)
+target_include_directories(mean_and_standard_deviation_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
+target_link_libraries(mean_and_standard_deviation_test gtest_main)
+
+add_executable(distance_profile_test tests/distance_profile_test.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/sliding_dot_product.cxx)
+target_include_directories(distance_profile_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
+target_link_libraries(distance_profile_test fftw3 gtest_main)
+
 
 include(GoogleTest)
 gtest_discover_tests(hello_test)
@@ -132,4 +140,5 @@ gtest_discover_tests(write_matrix_profile_csv_test)
 gtest_discover_tests(command_line_args_test)
 gtest_discover_tests(fourier_transform_test)
 gtest_discover_tests(sliding_dot_product_test)
-
+gtest_discover_tests(mean_and_standard_deviation_test)
+gtest_discover_tests(distance_profile_test)
