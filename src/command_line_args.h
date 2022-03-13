@@ -3,6 +3,8 @@
 
 #define LEADER 0
 
+#include <string>
+#include <vector>
 
 struct CommandLineArgs {
     std::string input_file;
