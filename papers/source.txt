@@ -1,0 +1,3 @@
+These papers were downloaded from:
+
+https://www.cs.ucr.edu/~eamonn/MatrixProfile.html
