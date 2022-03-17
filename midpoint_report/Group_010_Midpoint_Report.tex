@@ -54,7 +54,7 @@ Given a query subsequence $T_{i,m}$ and a time series $T$, we can compute the di
 
 \textbf{Definition 3:} A \emph{distance profile} $D_i$ corresponding to a query subsequence $T_{i,m}$ and a time series $T$ is a vector of the Euclidean distances between the given query subsequence $T_{i,m}$ and each subsequence in the time series $T$.  Formally, $D_i$ = [$d_{i,1}, d_{i,2}, \ldots{}, d_{i,n-m+1}$], such that $d_{i,j}(1 \leq j \leq n-m+1)$ is the distance between $T_{i,m}$ and $T_{j,m}$.
 
-Once $D_i$ is calculated it can be used to find the nearest neighbor of $T_{i,m}$ in $T$.  If the query subsequence $T_{i,m}$ is a subsequence of $T$ (itself, as opposed to another time series), then the $i^{th}$ location of the distance profile $D_i$ will be zero (that is, $d_{i,i} = 0$) and almost zero just to the left and right of $i$.  This is called a \emph{trivial match} since that point in the time series matches itself exactly and thus must be ignored.  To ignore trivial matches, an "exclusion zone" of length $m/k$ before and after $i$ (the location of the query) is used, where $1 < k < m-1$.  Emprically, an exclusion zone of $m/4$ works well for most applications.  Figure ~\ref{fig:ExclusionZone} shows how different sizes of exclusion zones impact the distance profile construction\cite{Stumpy}.
+Once $D_i$ is calculated it can be used to find the nearest neighbor of $T_{i,m}$ in $T$.  If the query subsequence $T_{i,m}$ is a subsequence of $T$ (itself, as opposed to another time series), then the $i^{th}$ location of the distance profile $D_i$ will be zero (that is, $d_{i,i} = 0$) and almost zero just to the left and right of $i$.  This is called a \emph{trivial match} since that point in the time series matches itself exactly and thus must be ignored.  To ignore trivial matches, an "exclusion zone" of length $m/k$ before and after $i$ (the location of the query) is used, where $1 < k < m-1$.  Emprically, an exclusion zone of $m/4$ works well for most applications.  Figure~\ref{fig:ExclusionZone} shows how different sizes of exclusion zones impact the distance profile construction\cite{Stumpy}.
 
 \begin{figure*}
 \begin{center}
@@ -72,7 +72,7 @@ The $i^{th}$ element of the Matrix Profile gives the Euclidean distance from the
 
 \textbf{Definition 5:} A \emph{Matrix Profile Index} $I$ of time series $T$ is an integer vector: $I = [I_1, I_2, \ldots{}, I_{n-m+1}]$, where $I_i = j$ if $d_{i,j}$ = min($D_i$).
 
-Figure ~\ref{fig:DistanceProfilesIntoMatrixProfile} illustrates the relationship between distance profiles and the Matrix Profile.  Each row in the distance matrix is a distance profile.  The minimum of each column is selected and collected in the Matrix Profile.  (The diagonal and the exclusion zone immediately around it are ignored.)  The Matrix Profile Index stores the location where the minimum of that column was found\cite{MatrixProfile14}.
+Figure~\ref{fig:DistanceProfilesIntoMatrixProfile} illustrates the relationship between distance profiles and the Matrix Profile.  Each row in the distance matrix is a distance profile.  The minimum of each column is selected and collected in the Matrix Profile.  (The diagonal and the exclusion zone immediately around it are ignored.)  The Matrix Profile Index stores the location where the minimum of that column was found\cite{MatrixProfile14}.
 
 \begin{figure}
 \begin{center}
@@ -82,7 +82,7 @@ Figure ~\ref{fig:DistanceProfilesIntoMatrixProfile} illustrates the relationship
 \end{center}
 \end{figure}
 
-Each distance matrix element $d_{i,j}$ is the distance between $T_{i,m}$ and $T_{j,m} (1 \leq i, j \leq n-m+1)$ of time series $T$.  Figure ~\ref{fig:DefinitionsIllustrated} shows an example time series and how the above definitions might be visualized\cite{MatrixProfile11}.  These definitions present the Matrix Profile as a \emph{self-join}.  That is, for every subsequence in a time series $T$, we find its non-trivial-match nearest neighbor within the \emph{same} time series.  To be more broadly useful, the Matrix Profile can be extended to be an AB-join: for every subsequence in a time series $A$, find the nearest neighbors in time series $B$ \cite{MatrixProfile2}\cite{MatrixProfile14}.  For the purposes of this project, we will only deal with the self-join scenario.
+Each distance matrix element $d_{i,j}$ is the distance between $T_{i,m}$ and $T_{j,m} (1 \leq i, j \leq n-m+1)$ of time series $T$.  Figure~\ref{fig:DefinitionsIllustrated} shows an example time series and how the above definitions might be visualized\cite{MatrixProfile11}.  These definitions present the Matrix Profile as a \emph{self-join}.  That is, for every subsequence in a time series $T$, we find its non-trivial-match nearest neighbor within the \emph{same} time series.  To be more broadly useful, the Matrix Profile can be extended to be an AB-join: for every subsequence in a time series $A$, find the nearest neighbors in time series $B$ \cite{MatrixProfile2}\cite{MatrixProfile14}.  For the purposes of this project, we will only deal with the self-join scenario.
 
 \begin{figure}
 \begin{center}
@@ -125,88 +125,29 @@ At this time we do not have any preliminary results.
 % ** Sprint 1 task list and burndown chart, Sprint 2 task list and burndown chart, etc.  ?
 
 \section{Sprint Tasks}
-Sprint Task lists go here.
+
+Figure~\ref{fig:SprintTasks} gives the list of tasks performed thus far, who completed the task, and the number of Story Points for that task.
+
 \begin{figure*}
 \begin{center}
-\includegraphics[scale=0.75]{tasks.png}
+\includegraphics[scale=1.05]{tasks.png}
 \caption{List of tasks, who completed the task and number of Story Points}
+\label{fig:SprintTasks}
 \end{center}
 \end{figure*}
 
 
-%\begin{figure}
-%\begin{center}
-%\includegraphics[scale=0.75]{sprint_2_tasks.png}
-%\caption{Sprint 2 Tasks}
-%\end{center}
+\section{Burndown Chart}
 
-%\end{figure}
-%\begin{figure}
-%\begin{center}
-%\includegraphics[scale=0.75]{sprint_3_tasks.png}
-%\caption{Sprint 3 Tasks}
-%\end{center}
+Figure~\ref{fig:BurndownChart} shows a burndown chart for the sprints.
 
-%\end{figure}
-%\begin{figure}
-%\begin{center}
-%\includegraphics[scale=0.75]{sprint_4_tasks.png}
-%\caption{Sprint 4 Tasks}
-%\end{center}
-
-%\end{figure}
-%\begin{figure}
-%\begin{center}
-%\includegraphics[scale=0.75]{sprint_5_tasks.png}
-%\caption{Sprint 5 Tasks}
-%\end{center}
-%\end{figure}
-
-
-\section{Burndown Charts}
-Burndown charts go here.
-
-\begin{figure}
+\begin{figure*}
 \begin{center}
-\includegraphics[scale=0.75]{Burndown.png}
+\includegraphics[scale=1.05]{Burndown.png}
 \caption{Burndown chart from Sprint 0 to Sprint 5}
+\label{fig:BurndownChart}
 \end{center}
-\end{figure}
-
-%\begin{figure}
-%\begin{center}
-%\includegraphics[scale=0.75]{sprint_1_burndown_chart.png}
-%\caption{Sprint 1 Burndown Chart}
-%\end{center}
-%\end{figure}
-
-%\begin{figure}
-%\begin{center}
-%\includegraphics[scale=0.75]{sprint_2_burndown_chart.png}
-%\caption{Sprint 2 Burndown Chart}
-%\end{center}
-%\end{figure}
-
-%\begin{figure}
-%\begin{center}
-%\includegraphics[scale=0.75]{sprint_3_burndown_chart.png}
-%\caption{Sprint 3 Burndown Chart}
-%\end{center}
-%\end{figure}
-
-%\begin{figure}
-%\begin{center}
-%\includegraphics[scale=0.75]{sprint_4_burndown_chart.png}
-%\caption{Sprint 4 Burndown Chart}
-%\end{center}
-%\end{figure}
-
-%\begin{figure}
-%\begin{center}
-%\includegraphics[scale=0.75]{sprint_5_burndown_chart.png}
-%\caption{Sprint 5 Burndown Chart}
-%\end{center}
-%\end{figure}
+\end{figure*}
 
 
 \bibliographystyle{IEEEtran}
@@ -224,7 +165,7 @@ Burndown charts go here.
 
 \bibitem{DynamicTimeWarping} T. Rakthanmanon et al., "Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping," In Proceedings of the 18th ACM SIGKDD international conference on Knowledge discovery and data mining (KDD '12). 2012. Association for Computing Machinery, New York, NY, USA, 262–270. DOI:https://doi.org/10.1145/2339530.2339576.
 
-\bibitem{Stumpy} S.M. Law, (2019). "STUMPY: A Powerful and Scalable Python Library for Time Series Data Mining," Journal of Open Source Software, 4(39), 1504.
+\bibitem{Stumpy} S.M. Law, (2019). "STUMPY: A Powerful and Scalable Python Library for Time Series Data Mining," Journal of Open Source Software, 4(39), 1504. [Online]. Available: https://github.com/TDAmeritrade/stumpy.
 
 \bibitem{Keogh} E. Keogh, \emph{The UCR Matrix Profile Page}, 2021. [Online]. Available: https://www.cs.ucr.edu/~eamonn/MatrixProfile.html.
 
