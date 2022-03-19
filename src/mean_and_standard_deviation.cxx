@@ -1,11 +1,40 @@
-
+#include <cmath>
 #include "mean_and_standard_deviation.h"
 #include "types.h"
+
+
+long double calculate_mean(const DoubleArray& double_array) {
+
+	long double mean = 0.0;
+
+	for (unsigned long i = 0; i < double_array.length; i++) {
+		mean += (double_array.data[i] - mean) / (i + 1);
+	}
+	return mean;
+}
+
+
+long double calculate_standard_deviation (const DoubleArray& double_array) { 
+
+	const long double mean = calculate_mean(double_array);
+
+	long double variance = 0.0 ;
+
+	for (unsigned long i = 0; i < double_array.length; i++) {
+		const long double delta = (double_array.data[i] - mean);
+		variance += (delta * delta);
+	}
+
+	return std::sqrt( (variance / (double)double_array.length) );
+}
+
+
+
 
 void compute_mean_and_standard_deviation(
         const DoubleArray& query_segment, const DoubleArray& time_series,               // input values
         double& query_segment_mean, double& query_segment_standard_deviation,           // output values
-        double& time_series_window_mean, double& time_series_window_standard_deviation  // output values
+        double& time_series_mean, double& time_series_standard_deviation  // output values
         ) {
 
     // The paper “Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping” shows a fast way to do this.  
@@ -14,11 +43,9 @@ void compute_mean_and_standard_deviation(
     // the paper recommends cacheing partial sums to speed up the mean and standard deviation calculations
     // We can just implement normal mean and standard deviation calculations.
     // First we need to make it work correctly, then we can see about making it faster.
+    query_segment_mean = calculate_mean(query_segment);
+    query_segment_standard_deviation = calculate_standard_deviation(query_segment);
 
-    // there is some overlap in how means and standard deviations are calculated so we can
-    // have some optimization by avoiding computing the same values twice
-    query_segment_mean = 0.0;
-    query_segment_standard_deviation = 0.0;
-    time_series_window_mean = 0.0;
-    time_series_window_standard_deviation = 0.0;
+    time_series_mean = calculate_mean(time_series);
+    time_series_standard_deviation = calculate_standard_deviation(time_series);
 }
