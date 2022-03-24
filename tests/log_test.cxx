@@ -39,7 +39,8 @@ TEST(LogTest, test_logging) {
     stop_logging();
 
     // verify log file exists
-    std::filesystem::path log_file = std::filesystem::current_path() / "process_0.log";
+    //std::filesystem::path log_file = std::filesystem::current_path() / "process_0.log";
+    std::filesystem::path log_file = "process_0.log";
     EXPECT_TRUE(std::filesystem::exists(log_file));
 
     // open log file and read contents
