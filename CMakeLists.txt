@@ -9,6 +9,12 @@ ProcessorCount(MPI_NUMBER_OF_PROCESSORS)
 project(Group_010 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
+# cmake modules go in cmake directory
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
+# ensure support for C++ 17 filesystem APIs
+find_package(Filesystem REQUIRED)
+
 # get GoogleTest from GitHub
 include(FetchContent)
 FetchContent_Declare(
@@ -102,7 +108,7 @@ target_link_libraries(timing_test gtest_main)
 
 add_executable(log_test tests/log_test.cxx src/timing.cxx src/log.cxx)
 target_include_directories(log_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
-target_link_libraries(log_test gtest_main)
+target_link_libraries(log_test gtest_main std::filesystem)
 
 add_executable(read_time_series_csv_test tests/read_time_series_csv_test.cxx src/read_time_series_csv.cxx)
 target_include_directories(read_time_series_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${CSV_PARSER_SOURCE_DIR}/single_include)

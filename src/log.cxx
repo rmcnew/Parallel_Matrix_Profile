@@ -38,6 +38,6 @@ void log(const char* format, ...) {
     va_end(args);
 
     double elapsed_time = get_elapsed_time();
-    fprintf(log_handle, "%4.6f [Process %d] %s\n", elapsed_time, rank, log_buffer);
+    fprintf(log_handle, "%4.6f [Process_%d] %s\n", elapsed_time, rank, log_buffer);
 }
 
