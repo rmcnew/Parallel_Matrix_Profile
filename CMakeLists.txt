@@ -13,7 +13,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 # ensure support for C++ 17 filesystem APIs
+if(NOT APPLE)
 find_package(Filesystem REQUIRED)
+endif()
 
 # get GoogleTest from GitHub
 include(FetchContent)
@@ -108,7 +110,11 @@ target_link_libraries(timing_test gtest_main)
 
 add_executable(log_test tests/log_test.cxx src/timing.cxx src/log.cxx)
 target_include_directories(log_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
+if(NOT APPLE)
 target_link_libraries(log_test gtest_main std::filesystem)
+else()
+target_link_libraries(log_test gtest_main)
+endif()
 
 add_executable(read_time_series_csv_test tests/read_time_series_csv_test.cxx src/read_time_series_csv.cxx)
 target_include_directories(read_time_series_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${CSV_PARSER_SOURCE_DIR}/single_include)
