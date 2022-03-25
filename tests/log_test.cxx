@@ -91,6 +91,8 @@ TEST(LogTest, test_logging) {
         }
     }
 
+    // close the log file
+    infile.close();
     // delete the log file
     std::filesystem::remove(log_file);
 }

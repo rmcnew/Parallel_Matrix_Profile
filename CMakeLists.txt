@@ -31,8 +31,10 @@ FetchContent_MakeAvailable(googletest)
 # FFTW3
 FetchContent_Declare(
     fftw3
-    URL https://www.fftw.org/fftw-3.3.10.tar.gz
-    URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
+    # URL https://www.fftw.org/fftw-3.3.10.tar.gz
+    # URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
+    ## www.fftw.org is down; created a temporary mirror
+    URL https://github.com/rmcnew/fftw/releases/download/v3.3.10/fftw-3.3.10.tar.gz
     CMAKE_CACHE_ARGS -DCMAKE_C_FLAGS:STRING=$<$<BOOL:WIN32>:-DFFTW_ENABLE_ALLOCA=0 -DWITH_OUR_MALLOC=1 -DHAVE_SSE2=1 -DHAVE_AVX=1 -DHAVE_AVX2=1 -Wl,-Bdynamic>
 )
 FetchContent_MakeAvailable(fftw3)
