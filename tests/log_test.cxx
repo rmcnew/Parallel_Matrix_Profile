@@ -41,13 +41,18 @@ TEST(LogTest, test_logging) {
     stop_logging();
 
     // verify log file exists
-    std::filesystem::path log_file(get_log_filename());
-    EXPECT_TRUE(std::filesystem::exists(log_file));
+    std::string log_filename = get_log_filename();
+    printf("log_filename is: %s\n", log_filename.c_str());
+    std::filesystem::path log_file(log_filename);
+    bool log_file_exists = std::filesystem::exists(log_file);
+    printf("log_file_exists: %d\n", log_file_exists);
+    EXPECT_TRUE(log_file_exists);
 
     // open log file and read contents
-    std::ifstream infile(log_file.string());
+    std::ifstream infile(log_filename);
     bool infile_good = infile.good();
 
+    printf("infile_good: %d\n", infile_good);
     EXPECT_TRUE(infile_good);
 
     // verify that log contents has the expected messages
@@ -60,11 +65,15 @@ TEST(LogTest, test_logging) {
         char log_entry[128];
     
         while (std::getline(infile, line)) {
-            //printf("line is: %s\n", line.c_str());
+            printf("line is: %s\n", line.c_str());
             int scanned_count = sscanf(line.c_str(), "%lf [Process_%d] %[ 'A-Za-z]", &elapsed_time, &process_rank, log_entry);
+            printf("scanned_count: %d\n", scanned_count);
             EXPECT_EQ(scanned_count, 3);
 
+            printf("elapsed_time: %f\n", elapsed_time);
             EXPECT_TRUE(elapsed_time > 0.0);
+
+            printf("process_rank: %d\n", process_rank);
             EXPECT_EQ(process_rank, 0);
 
             if (line_count == 0) {
