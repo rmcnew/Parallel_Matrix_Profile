@@ -27,9 +27,9 @@ std::filesystem::path get_exe_path() {
     std::wstring path_wstr(path); 
     std::string path_str;
     std::transform(  // truncating conversion
-        wide.begin(), 
-        wide.end(), 
-        std::back_inserter(str), 
+        path_wstr.begin(), 
+        path_wstr.end(), 
+        std::back_inserter(path_str), 
         [] (wchar_t c) { return (char)c; });
     std::filesystem::path exe_path(path_str);
 #else
