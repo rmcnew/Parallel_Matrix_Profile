@@ -14,6 +14,8 @@ TEST(LogTest, test_logging) {
     
     /* Test for logging:
 
+	std::string get_log_filename();
+
     void start_logging();
 
     void stop_logging();
@@ -39,8 +41,7 @@ TEST(LogTest, test_logging) {
     stop_logging();
 
     // verify log file exists
-    //std::filesystem::path log_file = std::filesystem::current_path() / "process_0.log";
-    std::filesystem::path log_file = "process_0.log";
+    std::filesystem::path log_file(get_log_filename());
     EXPECT_TRUE(std::filesystem::exists(log_file));
 
     // open log file and read contents

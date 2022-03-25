@@ -1,22 +1,55 @@
 #include <cstdarg>
 #include <cstdio>
+#include <filesystem>
 #include <sstream>
 #include "log.h"
 #include "timing.h"
 
 #define LOG_BUFFER_SIZE 1024
 
+std::string log_filename;
 std::FILE* log_handle = nullptr;
 extern int rank;
 
 
+#ifdef _WIN32
+#include <windows.h>    // GetModuleFileNameW
+#else
+#include <limits.h>
+#include <unistd.h>     // readlink
+#endif
+
+std::filesystem::path get_exe_path() {
+#ifdef _WIN32
+    wchar_t exe_path[MAX_PATH] = { 0 };
+    GetModuleFileNameW(NULL, exe_path, MAX_PATH);
+#else
+    char result[PATH_MAX];
+    ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    std::filesystem::path exe_path(std::string(result, (count > 0) ? count : 0));
+#endif
+    return exe_path.parent_path();
+} 
+
+
+
 // ***** Logging *****
+std::string get_log_filename() {
+    if (log_filename.empty()) {
+        std::stringstream filename;
+        filename << "process_" << rank << ".log";
+        std::filesystem::path log_file = get_exe_path() / filename.str();
+        log_filename = log_file.string();
+    }
+	return log_filename;
+}
+
+
 void start_logging() {
-    std::stringstream filename;
-    filename << "process_" << rank << ".log";
-    log_handle = fopen((const char*)filename.str().c_str(), "w");
+    get_log_filename();
+    log_handle = fopen((const char*)log_filename.c_str(), "w");
     if (log_handle == NULL) {
-        fprintf(stderr, "Error opening %s for writing\n", filename.str().c_str());
+        fprintf(stderr, "Error opening %s for writing\n", log_filename.c_str());
         log_handle = stdout;
     }
 }
