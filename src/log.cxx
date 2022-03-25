@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdarg>
 #include <cstdio>
 #include <filesystem>
@@ -21,10 +22,16 @@ extern int rank;
 
 std::filesystem::path get_exe_path() {
 #ifdef _WIN32
-    wchar_t exe_path_cstr[MAX_PATH] = { 0 };
-    GetModuleFileNameW(NULL, exe_path_cstr, MAX_PATH);
-    std::string exe_path_str {exe_path_cstr };
-    std::filesystem::path exe_path { exe_path_str };
+    wchar_t path[MAX_PATH] = { 0 };
+    GetModuleFileNameW(NULL, path, MAX_PATH);
+    std::wstring path_wstr(path); 
+    std::string path_str;
+    std::transform(  // truncating conversion
+        wide.begin(), 
+        wide.end(), 
+        std::back_inserter(str), 
+        [] (wchar_t c) { return (char)c; });
+    std::filesystem::path exe_path(path_str);
 #else
     char result[PATH_MAX];
     ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
