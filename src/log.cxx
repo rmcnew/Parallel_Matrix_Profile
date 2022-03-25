@@ -21,8 +21,9 @@ extern int rank;
 
 std::filesystem::path get_exe_path() {
 #ifdef _WIN32
-    wchar_t exe_path[MAX_PATH] = { 0 };
-    GetModuleFileNameW(NULL, exe_path, MAX_PATH);
+    wchar_t exe_path_cstr[MAX_PATH] = { 0 };
+    GetModuleFileNameW(NULL, exe_path_cstr, MAX_PATH);
+    std::filesystem::path exe_path(exe_path_cstr);
 #else
     char result[PATH_MAX];
     ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
