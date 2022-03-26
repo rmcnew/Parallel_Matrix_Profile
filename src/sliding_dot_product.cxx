@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
-#include <string>
 
 #include "fourier_transform.h"
 #include "sliding_dot_product.h"
@@ -46,13 +45,9 @@ ComplexArray elementwise_multiply(const ComplexArray& transformed_time_series, c
 // Output:  The dot product between the query_segment and all subsequences of the time_series
 DoubleArray sliding_dot_product(const DoubleArray& query_segment, const DoubleArray& time_series) {
 
-    DoubleArray result;
-
-
     // Step 1:  Get length of time_series and query_segment
     unsigned long time_series_length = time_series.length;      // called 'n' in the paper
     unsigned long query_segment_length = query_segment.length;  // called 'm' in the paper
-    // unsigned long matrix_profile_length = time_series_length - query_segment_length + 1;
 
     printf("Step 1:  Get length of time_series and query_segment\n");
     printDoubleArray("time_series", time_series);
@@ -121,7 +116,7 @@ DoubleArray sliding_dot_product(const DoubleArray& query_segment, const DoubleAr
     free(transformed_dot_product.data);
     
     // Step 7: // return dot_product
-    return result;
+    return dot_product;
 }
 
 // The fast_fourier_transform and inverse_fast_fourier_transform will need to come from an external library (FFTW3).
