@@ -30,9 +30,9 @@ void printComplexArray(std::string name, const ComplexArray& complex_array) {
 ComplexArray elementwise_multiply(const ComplexArray& transformed_time_series, const ComplexArray& transformed_query_segment) {
 
     ComplexArray result;
-    
     result.length = transformed_time_series.length;
     result.data = (std::complex<double>*) calloc(result.length, sizeof(std::complex<double>));
+
     for (unsigned long i = 0; i < result.length; i++) {
         result.data[i] = transformed_time_series.data[i] * transformed_query_segment.data[i];
     }
@@ -115,8 +115,19 @@ DoubleArray sliding_dot_product(const DoubleArray& query_segment, const DoubleAr
     free(transformed_query_segment.data);
     free(transformed_dot_product.data);
     
-    // Step 7: // return dot_product
-    return dot_product;
+    // Step 7: // return dot_product[m-1 : n]
+    DoubleArray result;
+    result.length = time_series.length - query_segment.length;
+    result.data = (double*) calloc(result.length, sizeof(double));
+    for (unsigned long i = query_segment.length - 1, j = 0; i < time_series.length; i++, j++) {
+        result.data[j] = dot_product.data[i];
+    }
+    free(dot_product.data);
+
+    printf("\nStep 7:  Extract indices [m-1 : n] from dot product\n");
+    printDoubleArray("result", result);
+
+    return result;
 }
 
 // The fast_fourier_transform and inverse_fast_fourier_transform will need to come from an external library (FFTW3).
