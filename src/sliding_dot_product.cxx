@@ -20,7 +20,7 @@ void printDoubleArray(std::string name, const DoubleArray& double_array) {
 void printComplexArray(std::string name, const ComplexArray& complex_array) {
     printf("%s:  ", name.c_str());
     for (unsigned long i = 0; i < complex_array.length; i++) {
-        printf("(%9.3f, %9.3f)\t", complex_array.data[i].real(), complex_array.data[i].imag());
+        printf("(%9.3Lf, %9.3Lf)\t", complex_array.data[i].real(), complex_array.data[i].imag());
     }
     printf("\n");
     printf("%s length: %lu\n", name.c_str(), complex_array.length);
@@ -31,7 +31,7 @@ ComplexArray elementwise_multiply(const ComplexArray& transformed_time_series, c
 
     ComplexArray result;
     result.length = transformed_time_series.length;
-    result.data = (std::complex<double>*) calloc(result.length, sizeof(std::complex<double>));
+    result.data = (std::complex<long double>*) calloc(result.length, sizeof(std::complex<long double>));
 
     for (unsigned long i = 0; i < result.length; i++) {
         result.data[i] = transformed_time_series.data[i] * transformed_query_segment.data[i];
@@ -117,9 +117,9 @@ DoubleArray sliding_dot_product(const DoubleArray& query_segment, const DoubleAr
     
     // Step 7: // return dot_product[m-1 : n]
     DoubleArray result;
-    result.length = time_series.length - query_segment.length;
+    result.length = time_series.length - query_segment.length + 1;
     result.data = (double*) calloc(result.length, sizeof(double));
-    for (unsigned long i = query_segment.length - 1, j = 0; i < time_series.length; i++, j++) {
+    for (unsigned long i = query_segment.length - 1, j = 0; i <= time_series.length; i++, j++) {
         result.data[j] = dot_product.data[i];
     }
     free(dot_product.data);
