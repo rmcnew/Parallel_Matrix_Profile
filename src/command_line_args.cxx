@@ -2,6 +2,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <mpi.h>
+#include <iostream>
+#include <fstream>
+using namespace std;
 
 #include "command_line_args.h"
 
@@ -21,6 +24,8 @@ void print_usage() {
 CommandLineArgs parse_command_line_args(std::vector<std::string> args) {    
     CommandLineArgs command_line_args;
 
+    //call mpi_init?
+
 	for (auto arg = args.begin(); arg != args.end(); arg++) {
         if (*arg == "-h" || *arg == "--help") {
             print_usage();
@@ -34,11 +39,11 @@ CommandLineArgs parse_command_line_args(std::vector<std::string> args) {
             command_line_args.output_file = *arg;
         } else if (*arg == "--window-size") {
             arg++;
-            std::string window_size_str = *arg;
+            std::string window_size_str = *arg; //0-inf
             command_line_args.window_size = std::stoi(window_size_str);
         } else if (*arg == "--input-column") {
             arg++;
-            std::string input_column_str = *arg;
+            std::string input_column_str = *arg; //0-inf
             command_line_args.input_column = std::stoi(input_column_str);
         }
     }
@@ -48,14 +53,32 @@ CommandLineArgs parse_command_line_args(std::vector<std::string> args) {
 
 
 void validate_command_line_args(const CommandLineArgs& command_line_args) {
-    bool valid = true;
-	// check that input_file exists and can be read
-    
+    bool valid = true; // set to false if failed any of the checks
+    cout << "test" << std::endl;
+
+    // check that input_file exists and can be read
+    ifstream inputFile;
+    inputFile.open(command_line_args.input_file);
+    if (!inputFile) {
+        valid = false;
+    }
+
     // check that output_file can be opened for writing
+    ifstream outputFile;
+    outputFile.open(command_line_args.output_file);
+    if (!outputFile) {
+        valid = false;
+    }
 
     // if present, window_size must be positive
+    if (command_line_args.window_size <= 0) {
+        valid = false;
+    }
 
     // if present, input_column must be positive
+    if (command_line_args.input_column <= 0) {
+        valid = false;
+    }
 
 	// if invalid, print usage and exit 	
     if (!valid) {
