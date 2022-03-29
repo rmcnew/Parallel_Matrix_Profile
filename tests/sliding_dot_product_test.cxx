@@ -225,7 +225,8 @@ TEST(SlidingDotProductTest, test_sliding_dot_product) {
 	// Ensure result matches expected
 	EXPECT_EQ(result.length, expected.length);
 	for (unsigned long i = 0; i < result.length; i++) {
-		EXPECT_DOUBLE_EQ(result.data[i], expected.data[i]);
+		//EXPECT_DOUBLE_EQ(result.data[i], expected.data[i]);
+		EXPECT_NEAR(result.data[i], expected.data[i], 0.000000000003);
 	}
 
     // clean up

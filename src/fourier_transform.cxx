@@ -8,20 +8,20 @@ ComplexArray fast_fourier_transform(const DoubleArray& double_array) {
     // prepare output ComplexArray
     ComplexArray complex_array;
     complex_array.length = (double_array.length / 2) + 1;
-    complex_array.data = (std::complex<long double>*) calloc (complex_array.length, sizeof(std::complex<long double>));
+    complex_array.data = (std::complex<double>*) calloc (complex_array.length, sizeof(std::complex<double>));
 
 	// higher-precision output
-	long double temp_in[double_array.length];
+	double temp_in[double_array.length];
 	for (unsigned long i = 0; i < double_array.length; i++) {
 		temp_in[i] = double_array.data[i];
 	}
 
     // prepare FFTW3 output type and plan
-    fftwl_complex* out = (fftwl_complex*) fftwl_malloc(complex_array.length * sizeof(fftwl_complex));
-    fftwl_plan forward_fft_plan = fftwl_plan_dft_r2c_1d(double_array.length, temp_in, out, FFTW_ESTIMATE);
+    fftw_complex* out = (fftw_complex*) fftw_malloc(complex_array.length * sizeof(fftw_complex));
+    fftw_plan forward_fft_plan = fftw_plan_dft_r2c_1d(double_array.length, temp_in, out, FFTW_ESTIMATE);
 
     // execute FFT
-    fftwl_execute(forward_fft_plan);
+    fftw_execute(forward_fft_plan);
 
     // copy results into output ComplexArray
     for (unsigned long i = 0; i < complex_array.length; i++) {
@@ -30,8 +30,8 @@ ComplexArray fast_fourier_transform(const DoubleArray& double_array) {
     }
     
     // free FFTW3 output type and plan
-    fftwl_destroy_plan(forward_fft_plan);
-    fftwl_free(out);
+    fftw_destroy_plan(forward_fft_plan);
+    fftw_free(out);
 
     return complex_array;
 }
@@ -43,10 +43,10 @@ DoubleArray inverse_fast_fourier_transform(const ComplexArray& complex_array, un
     double_array.data = (double*) calloc (double_array.length, sizeof(double));
     
 	// higher-precision output
-	long double temp_out[output_length];	
+	double temp_out[output_length];	
     // prepare FFTW input type and plan
-    fftwl_complex* in = (fftwl_complex*) fftwl_malloc(complex_array.length * sizeof(fftwl_complex));
-    fftwl_plan inverse_fft_plan = fftwl_plan_dft_c2r_1d(double_array.length, in, temp_out, FFTW_ESTIMATE);
+    fftw_complex* in = (fftw_complex*) fftw_malloc(complex_array.length * sizeof(fftw_complex));
+    fftw_plan inverse_fft_plan = fftw_plan_dft_c2r_1d(double_array.length, in, temp_out, FFTW_ESTIMATE);
 
     // copy input ComplexArray into fftw input type
     for (unsigned long i = 0; i < complex_array.length; i++) {
@@ -55,14 +55,14 @@ DoubleArray inverse_fast_fourier_transform(const ComplexArray& complex_array, un
     }
 
     // execute inverse FFT
-    fftwl_execute(inverse_fft_plan);
+    fftw_execute(inverse_fft_plan);
 
     // free FFTW3 input type and plan
-    fftwl_destroy_plan(inverse_fft_plan);
-    fftwl_free(in);
+    fftw_destroy_plan(inverse_fft_plan);
+    fftw_free(in);
 
     // normalize result
-    long double dN = (long double) double_array.length;
+    double dN = (double) double_array.length;
     for (unsigned long i = 0; i < double_array.length; i++) {
         double_array.data[i] = (double) (temp_out[i] / dN);
     }

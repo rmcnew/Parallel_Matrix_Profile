@@ -29,20 +29,17 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # FFTW3
-if(WIN32)
-	set(MY_FFTW3_C_FLAGS "-DCMAKE_C_FLAGS:STRING=-DFFTW_ENABLE_ALLOCA=0 -DWITH_OUR_MALLOC=1 -DHAVE_LONG_DOUBLE=1 -DHAVE_SSE2=1 -DHAVE_AVX=1 -DHAVE_AVX2=1 -Wl,-Bdynamic")
-else()
-	set(MY_FFTW3_C_FLAGS "-DCMAKE_C_FLAGS:STRING=-DWITH_OUR_MALLOC=1 -DHAVE_LONG_DOUBLE=1 -DHAVE_SSE2=1 -DHAVE_AVX=1 -DHAVE_AVX2=1")
-endif()
-
-FetchContent_Declare(
-    fftw3
-    URL https://www.fftw.org/fftw-3.3.10.tar.gz
-    URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
-    ## www.fftw.org was down; created a temporary mirror
-    #URL https://github.com/rmcnew/fftw/releases/download/v3.3.10/fftw-3.3.10.tar.gz
-    CMAKE_CACHE_ARGS ${MY_FFTW3_C_FLAGS})
-FetchContent_MakeAvailable(fftw3)
+#FetchContent_Declare(
+#    fftw3
+#    URL https://www.fftw.org/fftw-3.3.10.tar.gz
+#    URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
+#    ## www.fftw.org was down; created a temporary mirror
+#    #URL https://github.com/rmcnew/fftw/releases/download/v3.3.10/fftw-3.3.10.tar.gz
+#	CMAKE_CACHE_ARGS -DCMAKE_C_FLAGS:STRING=$<-DFFTW_ENABLE_ALLOCA=0 -DWITH_OUR_MALLOC=1 -DHAVE_SSE2=1 -DHAVE_AVX=1 -DHAVE_AVX2=1 HAVE_LONG_DOUBLE=1 FFTW_LDOUBLE=1 BENCHFFT_LDOUBLE=1 DISABLE_FORTRAN=1 -Wl,-Bdynamic>
+#)
+#FetchContent_MakeAvailable(fftw3)
+add_subdirectory(fftw3)
+set(fftw3_SOURCE_DIR "${PROJECT_SOURCE_DIR}/fftw3")
 
 # CSV Parser from https://github.com/vincentlaucsb/csv-parser
 add_subdirectory(csv-parser)

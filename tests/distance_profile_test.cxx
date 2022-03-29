@@ -121,7 +121,7 @@ TEST(DistanceProfileTest, test_distance_profile) {
     qs.data = &(ts.data[5]);
 
     // calculate_distance_profile
-    DoubleArray result = calculate_distance_profile(qs, ts);
+    //DoubleArray result = calculate_distance_profile(qs, ts);
 
     // compare computed distance_profile against pre-computed values
 

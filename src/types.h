@@ -17,7 +17,7 @@ struct MatrixProfile {
 
 
 struct ComplexArray {
-    std::complex<long double>* data = nullptr;
+    std::complex<double>* data = nullptr;
     unsigned long length = 0;
 };
 
