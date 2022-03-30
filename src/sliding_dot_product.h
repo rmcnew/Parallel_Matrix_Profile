@@ -8,9 +8,9 @@ ComplexArray elementwise_multiply(const ComplexArray& transformed_query_segment,
 
 DoubleArray sliding_dot_product(const DoubleArray& query_segment, const DoubleArray& time_series);
 
-void printDoubleArray(std::string name, const DoubleArray& double_array);
+void printDoubleArray(const std::string& name, const DoubleArray& double_array);
 
-void printComplexArray(std::string name, const ComplexArray& complex_array);
+void printComplexArray(const std::string& name, const ComplexArray& complex_array);
 
 #endif // GROUP_010_SLIDING_DOT_PRODUCT_H
 

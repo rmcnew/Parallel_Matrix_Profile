@@ -4,11 +4,21 @@ if (NOT DEFINED CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE Release CACHE STRING "Build type")
 endif ()
 
-project (fftw)
+project (fftw LANGUAGES C)
+set(CMAKE_C_STANDARD 11)
 
 if (POLICY CMP0042)
   cmake_policy (SET CMP0042 NEW)
 endif ()
+
+if(WIN32)
+    add_compile_options(-Wl,-Bdynamic)
+    add_compile_definitions(FTW_ENABLE_ALLOCA=0 WITH_OUR_MALLOC=1)
+endif()
+if(MINGW)
+    set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ ${CMAKE_CXX_STANDARD_LIBRARIES}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
+endif()
 
 option (BUILD_SHARED_LIBS "Build shared libraries" ON)
 option (BUILD_TESTS "Build tests" ON)
@@ -18,8 +28,8 @@ option (ENABLE_THREADS "Use pthread for multithreading" OFF)
 option (WITH_COMBINED_THREADS "Merge thread library" OFF)
 
 option (ENABLE_FLOAT "Build the single precision library" OFF)
-option (ENABLE_DOUBLE "Build the double precision library" ON)
-option (ENABLE_LONG_DOUBLE "Build the long double precision library" OFF)
+option (ENABLE_DOUBLE "Build the double precision library" OFF)
+option (ENABLE_LONG_DOUBLE "Build the long double precision library" ON)
 option (ENABLE_QUAD_PRECISION "Build the quadruple precision library" OFF)
 
 option (ENABLE_SSE "Compile with SSE instruction set support" OFF)
@@ -28,7 +38,7 @@ option (ENABLE_AVX "Compile with AVX instruction set support" OFF)
 option (ENABLE_AVX2 "Compile with AVX2 instruction set support" OFF)
 option (ENABLE_NEON "Compile with NEON instruction set support" OFF)
 
-option (DISABLE_FORTRAN "Disable Fortran wrapper routines" OFF)
+option (DISABLE_FORTRAN "Disable Fortran wrapper routines" ON)
 
 include(GNUInstallDirs)
 
