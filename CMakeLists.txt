@@ -29,15 +29,19 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # FFTW3
-FetchContent_Declare(
-    fftw3
-    # URL https://www.fftw.org/fftw-3.3.10.tar.gz
-    # URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
-    ## www.fftw.org is down; created a temporary mirror
-    URL https://github.com/rmcnew/fftw/releases/download/v3.3.10/fftw-3.3.10.tar.gz
-    CMAKE_CACHE_ARGS -DCMAKE_C_FLAGS:STRING=$<$<BOOL:WIN32>:-DFFTW_ENABLE_ALLOCA=0 -DWITH_OUR_MALLOC=1 -DHAVE_SSE2=1 -DHAVE_AVX=1 -DHAVE_AVX2=1 -Wl,-Bdynamic>
-)
-FetchContent_MakeAvailable(fftw3)
+#FetchContent_Declare(
+#    fftw3
+#    URL https://www.fftw.org/fftw-3.3.10.tar.gz
+#    URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
+#    ## www.fftw.org was down; created a temporary mirror
+#    #URL https://github.com/rmcnew/fftw/releases/download/v3.3.10/fftw-3.3.10.tar.gz
+#	 CMAKE_CACHE_ARGS -DCMAKE_C_FLAGS:STRING=$<-DFFTW_ENABLE_ALLOCA=0 -DWITH_OUR_MALLOC=1 -DHAVE_SSE2=1 -DHAVE_AVX=1 -DHAVE_AVX2=1 HAVE_LONG_DOUBLE=1 FFTW_LDOUBLE=1 BENCHFFT_LDOUBLE=1 DISABLE_FORTRAN=1 -Wl,-Bdynamic>
+#)
+#FetchContent_MakeAvailable(fftw3)
+add_subdirectory(fftw3)
+set(fftw3_SOURCE_DIR "${PROJECT_SOURCE_DIR}/fftw3")
+set(fftw3_BINARY_DIR "${CMAKE_BINARY_DIR}/fftw3")
+link_directories("${fftw3_BINARY_DIR}")
 
 # CSV Parser from https://github.com/vincentlaucsb/csv-parser
 add_subdirectory(csv-parser)
@@ -82,9 +86,9 @@ if(MINGW)
 endif()
 
 if(NOT APPLE)
-target_link_libraries(matrix_profile PUBLIC fftw3 ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} csv std::filesystem)
+target_link_libraries(matrix_profile PUBLIC fftw3l ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} csv std::filesystem)
 else()
-target_link_libraries(matrix_profile PUBLIC fftw3 ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} csv)
+target_link_libraries(matrix_profile PUBLIC fftw3l ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} csv)
 endif()
 
 # mpirun target
@@ -100,13 +104,16 @@ target_link_libraries(hello_test gtest_main)
 
 add_executable(fftw_test tests/fftw_test.cxx)
 target_include_directories(fftw_test PUBLIC ${fftw3_SOURCE_DIR}/api)
-target_link_libraries(fftw_test fftw3 gtest_main)
+target_link_libraries(fftw_test fftw3l gtest_main)
+if (WIN32)
+target_compile_definitions(fftw_test PUBLIC GTEST_LINKED_AS_SHARED_LIBRARY=1)
+endif()
 if(MINGW)
     # copy the FFTW3 dll to the executables directory
     # so the executables and tests can find it
     add_custom_command(TARGET fftw_test POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${fftw3_BINARY_DIR}/libfftw3.dll"
+        "${fftw3_BINARY_DIR}/libfftw3l.dll"
         "${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
@@ -138,11 +145,11 @@ target_link_libraries(command_line_args_test PUBLIC ${MPI_CXX_LIBRARIES} ${MPI_C
 
 add_executable(fourier_transform_test tests/fourier_transform_test.cxx src/fourier_transform.cxx)
 target_include_directories(fourier_transform_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
-target_link_libraries(fourier_transform_test fftw3 gtest_main)
+target_link_libraries(fourier_transform_test fftw3l gtest_main)
 
 add_executable(sliding_dot_product_test tests/sliding_dot_product_test.cxx src/sliding_dot_product.cxx src/fourier_transform.cxx)
 target_include_directories(sliding_dot_product_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
-target_link_libraries(sliding_dot_product_test fftw3 gtest_main)
+target_link_libraries(sliding_dot_product_test fftw3l gtest_main)
 
 add_executable(mean_and_standard_deviation_test tests/mean_and_standard_deviation_test.cxx src/mean_and_standard_deviation.cxx)
 target_include_directories(mean_and_standard_deviation_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
@@ -150,11 +157,11 @@ target_link_libraries(mean_and_standard_deviation_test gtest_main)
 
 add_executable(distance_profile_test tests/distance_profile_test.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/fourier_transform.cxx src/sliding_dot_product.cxx)
 target_include_directories(distance_profile_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
-target_link_libraries(distance_profile_test fftw3 gtest_main)
+target_link_libraries(distance_profile_test fftw3l gtest_main)
 
 add_executable(stamp_test tests/stamp_test.cxx src/stamp.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/fourier_transform.cxx src/sliding_dot_product.cxx)
 target_include_directories(stamp_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
-target_link_libraries(stamp_test fftw3 gtest_main)
+target_link_libraries(stamp_test fftw3l gtest_main)
 
 
 include(GoogleTest)

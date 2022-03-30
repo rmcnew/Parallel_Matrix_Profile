@@ -31,7 +31,7 @@ TEST(FourierTransformTest, test_fourier_transform) {
     // pre-computed result
     ComplexArray expected_d1_fft;
     expected_d1_fft.length = 5;
-    expected_d1_fft.data = (std::complex<double>*) calloc(expected_d1_fft.length, sizeof(std::complex<double>));
+    expected_d1_fft.data = (std::complex<long double>*) calloc(expected_d1_fft.length, sizeof(std::complex<long double>));
     expected_d1_fft.data[0].real(495.0);
     expected_d1_fft.data[0].imag(0.0);
     expected_d1_fft.data[1].real(-49.5);
@@ -41,7 +41,7 @@ TEST(FourierTransformTest, test_fourier_transform) {
     expected_d1_fft.data[3].real(-49.5);
     expected_d1_fft.data[3].imag(28.578838324886473);
     expected_d1_fft.data[4].real(-49.5);
-    expected_d1_fft.data[4].imag(8.7281855450690031);
+    expected_d1_fft.data[4].imag(8.7281855450690156);
 
     // run test data through fast_fourier_transform
     ComplexArray d1_fft = fast_fourier_transform(d1);

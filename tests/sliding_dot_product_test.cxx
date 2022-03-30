@@ -1,3 +1,5 @@
+#include <cstdio>
+#include <cstdlib>
 #include <gtest/gtest.h>
 #include "sliding_dot_product.h"
 
@@ -120,12 +122,119 @@ TEST(SlidingDotProductTest, test_sliding_dot_product) {
     qs.length = 10;
     qs.data = &(ts.data[5]);
 
+
+    DoubleArray expected;
+	expected.length = 91;
+	expected.data = (double*) calloc(expected.length, sizeof(double));
+	expected.data[0] = 660.0;
+	expected.data[1] = 765.0;
+	expected.data[2] = 870.0;
+	expected.data[3] = 975.0;
+	expected.data[4] = 1080.0;
+	expected.data[5] = 1185.0;
+	expected.data[6] = 1290.0;
+	expected.data[7] = 1395.0;
+	expected.data[8] = 1500.0;
+	expected.data[9] = 1605.0;
+	expected.data[10] = 1710.0;
+	expected.data[11] = 1815.0;
+	expected.data[12] = 1920.0;
+	expected.data[13] = 2025.0;
+	expected.data[14] = 2130.0;
+	expected.data[15] = 2235.0;
+	expected.data[16] = 2340.0;
+	expected.data[17] = 2445.0;
+	expected.data[18] = 2550.0;
+	expected.data[19] = 2655.0;
+	expected.data[20] = 2760.0;
+	expected.data[21] = 2865.0;
+	expected.data[22] = 2970.0;
+	expected.data[23] = 3075.0;
+	expected.data[24] = 3180.0;
+	expected.data[25] = 3285.0;
+	expected.data[26] = 3390.0;
+	expected.data[27] = 3495.0;
+	expected.data[28] = 3600.0;
+	expected.data[29] = 3705.0;
+	expected.data[30] = 3810.0;
+	expected.data[31] = 3915.0;
+	expected.data[32] = 4020.0;
+	expected.data[33] = 4125.0;
+	expected.data[34] = 4230.0;
+	expected.data[35] = 4335.0;
+	expected.data[36] = 4440.0;
+	expected.data[37] = 4545.0;
+	expected.data[38] = 4650.0;
+	expected.data[39] = 4755.0;
+	expected.data[40] = 4860.0;
+	expected.data[41] = 4965.0;
+	expected.data[42] = 5070.0;
+	expected.data[43] = 5175.0;
+	expected.data[44] = 5280.0;
+	expected.data[45] = 5385.0;
+	expected.data[46] = 5490.0;
+	expected.data[47] = 5595.0;
+	expected.data[48] = 5700.0;
+	expected.data[49] = 5805.0;
+	expected.data[50] = 5910.0;
+	expected.data[51] = 6015.0;
+	expected.data[52] = 6120.0;
+	expected.data[53] = 6225.0;
+	expected.data[54] = 6330.0;
+	expected.data[55] = 6435.0;
+	expected.data[56] = 6540.0;
+	expected.data[57] = 6645.0;
+	expected.data[58] = 6750.0;
+	expected.data[59] = 6855.0;
+	expected.data[60] = 6960.0;
+	expected.data[61] = 7065.0;
+	expected.data[62] = 7170.0;
+	expected.data[63] = 7275.0;
+	expected.data[64] = 7380.0;
+	expected.data[65] = 7485.0;
+	expected.data[66] = 7590.0;
+	expected.data[67] = 7695.0;
+	expected.data[68] = 7800.0;
+	expected.data[69] = 7905.0;
+	expected.data[70] = 8010.0;
+	expected.data[71] = 8115.0;
+	expected.data[72] = 8220.0;
+	expected.data[73] = 8325.0;
+	expected.data[74] = 8430.0;
+	expected.data[75] = 8535.0;
+	expected.data[76] = 8640.0;
+	expected.data[77] = 8745.0;
+	expected.data[78] = 8850.0;
+	expected.data[79] = 8955.0;
+	expected.data[80] = 9060.0;
+	expected.data[81] = 9165.0;
+	expected.data[82] = 9270.0;
+	expected.data[83] = 9375.0;
+	expected.data[84] = 9480.0;
+	expected.data[85] = 9585.0;
+	expected.data[86] = 9690.0;
+	expected.data[87] = 9795.0;
+	expected.data[88] = 9900.0;
+	expected.data[89] = 10005.0;
+	expected.data[90] = 10110.0;
+
+    // calculate the result
     DoubleArray result = sliding_dot_product(qs, ts);
 
-    // Printing each step seems to give correct answers
-    // We need a way to validate that the returned result 
-    // matches expected values
-    EXPECT_TRUE(true);
+
+    //printf("\nCompare computed sliding_dot_product result to expected sliding_dot_product values\n");
+    //printDoubleArray("expected", expected);
+
+	// Ensure result matches expected
+	EXPECT_EQ(result.length, expected.length);
+	for (unsigned long i = 0; i < result.length; i++) {
+		EXPECT_DOUBLE_EQ(result.data[i], expected.data[i]);
+		//EXPECT_NEAR(result.data[i], expected.data[i], 0.000000000003);
+	}
+
+    // clean up
+    free(result.data);
+    free(expected.data);
 }
 
 
