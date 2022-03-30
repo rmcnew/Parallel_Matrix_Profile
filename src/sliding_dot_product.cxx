@@ -11,7 +11,7 @@
 void printDoubleArray(const std::string& name, const DoubleArray& double_array) {
     printf("%s:  ", name.c_str());
     for (unsigned long i = 0; i < double_array.length; i++) {
-        printf("%9.3f\t", double_array.data[i]);
+        printf("%e\t", double_array.data[i]);
     }
     printf("\n");
     printf("%s length: %lu\n", name.c_str(), double_array.length);
@@ -20,7 +20,7 @@ void printDoubleArray(const std::string& name, const DoubleArray& double_array) 
 void printComplexArray(const std::string& name, const ComplexArray& complex_array) {
     printf("%s:  ", name.c_str());
     for (unsigned long i = 0; i < complex_array.length; i++) {
-        printf("(%9.3Lf, %9.3Lf)\t", complex_array.data[i].real(), complex_array.data[i].imag());
+        printf("(%Lf, %Lf)\t", complex_array.data[i].real(), complex_array.data[i].imag());
     }
     printf("\n");
     printf("%s length: %lu\n", name.c_str(), complex_array.length);

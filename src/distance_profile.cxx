@@ -21,11 +21,11 @@ DoubleArray calculate_distance_profile(const DoubleArray& query_segment, const D
         query_segment_mean, query_segment_standard_deviation, 
         time_series_mean, time_series_standard_deviation); 
 
-    printf("query_segment_mean:  %f\nquery_segment_standard_deviation:  %f\ntime_series_mean:  %f\ntime_series_standard_deviation:  %f\n", query_segment_mean, query_segment_standard_deviation, time_series_mean, time_series_standard_deviation);
+    //printf("query_segment_mean:  %f\nquery_segment_standard_deviation:  %f\ntime_series_mean:  %f\ntime_series_standard_deviation:  %f\n", query_segment_mean, query_segment_standard_deviation, time_series_mean, time_series_standard_deviation);
 
     DoubleArray dot_product = sliding_dot_product(query_segment, time_series);
 
-    printDoubleArray("dot_product", dot_product);
+    //printDoubleArray("dot_product", dot_product);
 
     unsigned long matrix_profile_length = time_series.length - query_segment.length + 1;
     printf("matrix_profile_length: %lu\n", matrix_profile_length);
@@ -39,7 +39,11 @@ DoubleArray calculate_distance_profile(const DoubleArray& query_segment, const D
         distance_profile.data[i] = std::sqrt(2 * query_segment.length * (1 - ((dot_product.data[i] - query_segment.length * query_segment_mean * time_series_mean) / (query_segment.length * query_segment_standard_deviation * time_series_standard_deviation))));
     }
 
+	printf("\nComputed distance_profile\n");
     printDoubleArray("distance_profile", distance_profile);
+
+	// clean up dot_product
+	free(dot_product.data);
 
     return distance_profile;
 }
