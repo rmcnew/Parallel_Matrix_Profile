@@ -8,6 +8,11 @@ struct DoubleArray {
     unsigned long length = 0;
 };
 
+struct LongDoubleArray {
+    long double* data = nullptr;
+    unsigned long length = 0;
+};
+
 
 struct MatrixProfile {
     double* data = nullptr;
