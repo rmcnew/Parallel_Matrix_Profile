@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-DoubleArray calculate_distance_profile(const DoubleArray& query_segment, const DoubleArray& time_series);
+LongDoubleArray calculate_distance_profile(const LongDoubleArray& query_segment, const LongDoubleArray& time_series);
 
 #endif // GROUP_010_DISTANCE_PROFILE_H
 

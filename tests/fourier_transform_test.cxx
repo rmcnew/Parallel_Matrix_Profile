@@ -15,18 +15,18 @@ TEST(FourierTransformTest, test_fourier_transform) {
     */
 
     // create a DoubleArray of test data
-    DoubleArray d1;
+    LongDoubleArray d1;
     d1.length = 9;
-    d1.data = (double*) calloc(d1.length, sizeof(double));
-    d1.data[0] = 11.0;
-    d1.data[1] = 22.0;
-    d1.data[2] = 33.0;
-    d1.data[3] = 44.0;
-    d1.data[4] = 55.0;
-    d1.data[5] = 66.0;
-    d1.data[6] = 77.0;
-    d1.data[7] = 88.0;
-    d1.data[8] = 99.0;
+    d1.data = (long double*) calloc(d1.length, sizeof(long double));
+    d1.data[0] = 11.0L;
+    d1.data[1] = 22.0L;
+    d1.data[2] = 33.0L;
+    d1.data[3] = 44.0L;
+    d1.data[4] = 55.0L;
+    d1.data[5] = 66.0L;
+    d1.data[6] = 77.0L;
+    d1.data[7] = 88.0L;
+    d1.data[8] = 99.0L;
 
     // pre-computed result
     ComplexArray expected_d1_fft;
@@ -54,12 +54,12 @@ TEST(FourierTransformTest, test_fourier_transform) {
     }
 
     // run the ComplexArray result through inverse_fast_fourier_transform
-    DoubleArray d2 = inverse_fast_fourier_transform(d1_fft, d1.length);
+    LongDoubleArray d2 = inverse_fast_fourier_transform(d1_fft, d1.length);
 
-    // verify the DoubleArray result matches the original DoubleArray of test data
+    // verify the result matches the original test data
     EXPECT_EQ(d1.length, d2.length);
     for (unsigned long i = 0; i < d1.length; i++) {
-        EXPECT_DOUBLE_EQ(d1.data[i], d2.data[i]);
+        EXPECT_DOUBLE_EQ((double)d1.data[i], (double)d2.data[i]);
     }
 
     // free allocated memory
