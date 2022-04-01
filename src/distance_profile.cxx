@@ -149,15 +149,19 @@ DoubleArray calculate_distance_profile(const DoubleArray& query_segment, const D
     distance_profile.length = matrix_profile_length;
     distance_profile.data = (double*) calloc(distance_profile.length, sizeof(double));
 	for (unsigned long i = 0; i < distance_profile.length; i++) {
-		distance_profile.data[i] = std::sqrt( std::fabs (
-								       (subsequence_sum_time_series_squared.data[i] - 2.0 * subsequence_sum_time_series.data[i] * time_series_means.data[i] + m * time_series_means_squared.data[i])
-                                       / time_series_variances.data[i]
-                                       - 2.0 * dot_product.data[i] / time_series_standard_deviations.data[i]
+        double first = subsequence_sum_time_series_squared.data[i] - 2.0 * subsequence_sum_time_series.data[i] * time_series_means.data[i] + m * time_series_means_squared.data[i];
+        double second = time_series_variances.data[i];
+        double third = 2.0 * dot_product.data[i] / time_series_standard_deviations.data[i];
+        double d_squared = std::fabs ( first
+                                       / second
+                                       - third
                                        + m
-								   ));
+						   );
+        double d = std::sqrt(d_squared);
+        distance_profile.data[i] = d;
 	}
 
-	printf("\nComputed distance_profile\n");
+	printf("\n\nComputed distance_profile\n");
     printDoubleArray("distance_profile", distance_profile);
 
 	// clean up intermediate data
