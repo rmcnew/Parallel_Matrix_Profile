@@ -11,7 +11,7 @@ extern int process_count;
 void printMatrixProfile(const std::string& name, const MatrixProfile& mp) {
     printf("%s data:  ", name.c_str());
     for (unsigned long i = 0; i < mp.length; i++) {
-        printf("%e\t", mp.data[i]);
+        printf("%Le\t", mp.data[i]);
     }
     printf("\n%s indices:  ", name.c_str());
     for (unsigned long i = 0; i < mp.length; i++) {
@@ -30,7 +30,7 @@ void elementwise_minimum(MatrixProfile& mp, const LongDoubleArray& distance_prof
         if (i < exclusion_start || i > exclusion_stop) {
             if (mp.data[i] > distance_profile.data[i]) {
                 mp.data[i] = distance_profile.data[i];
-                mp.index[i] = i;  // is this correct?
+                mp.index[i] = index;  // is this correct?
             }
         }
     }
@@ -52,7 +52,7 @@ MatrixProfile stamp(const LongDoubleArray& time_series, const int& window_size, 
     matrix_profile.data = (long double*) calloc(matrix_profile.length, sizeof(long double));
     matrix_profile.index = (unsigned long*) calloc(matrix_profile.length, sizeof(unsigned long));
     for (unsigned long i = 0; i < matrix_profile.length; i++) {
-        matrix_profile.data[i] = std::numeric_limits<double>::max();
+        matrix_profile.data[i] = (long double)std::numeric_limits<double>::max();
         matrix_profile.index[i] = 0;
     }
     printMatrixProfile("matrix_profile initialized", matrix_profile);
