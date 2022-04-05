@@ -12,16 +12,17 @@ if (POLICY CMP0042)
 endif ()
 
 if(WIN32)
-    add_compile_options(-Wl,-Bdynamic)
     add_compile_definitions(FTW_ENABLE_ALLOCA=0 WITH_OUR_MALLOC=1)
 endif()
+
 if(MINGW)
+    add_compile_options(-Wl,-Bdynamic)
     set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ ${CMAKE_CXX_STANDARD_LIBRARIES}")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
 endif()
 
 option (BUILD_SHARED_LIBS "Build shared libraries" ON)
-option (BUILD_TESTS "Build tests" ON)
+option (BUILD_TESTS "Build tests" OFF)
 
 option (ENABLE_OPENMP "Use OpenMP for multithreading" OFF)
 option (ENABLE_THREADS "Use pthread for multithreading" OFF)

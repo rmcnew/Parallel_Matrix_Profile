@@ -15,7 +15,7 @@ struct LongDoubleArray {
 
 
 struct MatrixProfile {
-    double* data = nullptr;
+    long double* data = nullptr;
     unsigned long length = 0;
     unsigned long* index = nullptr;
 };
