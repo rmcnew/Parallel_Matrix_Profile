@@ -28,16 +28,9 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+
+
 # FFTW3
-#FetchContent_Declare(
-#    fftw3
-#    URL https://www.fftw.org/fftw-3.3.10.tar.gz
-#    URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
-#    ## www.fftw.org was down; created a temporary mirror
-#    #URL https://github.com/rmcnew/fftw/releases/download/v3.3.10/fftw-3.3.10.tar.gz
-#	 CMAKE_CACHE_ARGS -DCMAKE_C_FLAGS:STRING=$<-DFFTW_ENABLE_ALLOCA=0 -DWITH_OUR_MALLOC=1 -DHAVE_SSE2=1 -DHAVE_AVX=1 -DHAVE_AVX2=1 HAVE_LONG_DOUBLE=1 FFTW_LDOUBLE=1 BENCHFFT_LDOUBLE=1 DISABLE_FORTRAN=1 -Wl,-Bdynamic>
-#)
-#FetchContent_MakeAvailable(fftw3)
 add_subdirectory(fftw3)
 set(fftw3_SOURCE_DIR "${PROJECT_SOURCE_DIR}/fftw3")
 set(fftw3_BINARY_DIR "${CMAKE_BINARY_DIR}/fftw3")
@@ -52,11 +45,11 @@ find_package(MPI REQUIRED)
 
 
 ## uncomment to print all defined variables (useful for debugging)
-#get_cmake_property(_variableNames VARIABLES)
-#list (SORT _variableNames)
-#foreach (_variableName ${_variableNames})
-#    message(STATUS "${_variableName}=${${_variableName}}")
-#endforeach()
+get_cmake_property(_variableNames VARIABLES)
+list (SORT _variableNames)
+foreach (_variableName ${_variableNames})
+    message(STATUS "${_variableName}=${${_variableName}}")
+endforeach()
 
 #message(STATUS "Run: ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPI_NUMBER_OF_PROCESSORS} EXECUTABLE ARGS")
 
@@ -102,20 +95,41 @@ add_custom_target(run COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MP
 add_executable(hello_test tests/hello_test.cxx)
 target_link_libraries(hello_test gtest_main)
 
+if(WIN32 AND NOT MINGW)
+    # copy the FFTW3 dll to the executables directory
+    # so the executables and tests can find it
+    add_custom_command(TARGET hello_test POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${PROJECT_BINARY_DIR}/bin/gtest_maind.dll"
+        "${CMAKE_BINARY_DIR}")
+
+    add_custom_command(TARGET hello_test POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${PROJECT_BINARY_DIR}/bin/gtestd.dll"
+        "${CMAKE_BINARY_DIR}")
+endif()
+
 add_executable(fftw_test tests/fftw_test.cxx)
 target_include_directories(fftw_test PUBLIC ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(fftw_test fftw3l gtest_main)
-if (WIN32)
-target_compile_definitions(fftw_test PUBLIC GTEST_LINKED_AS_SHARED_LIBRARY=1)
-endif()
+
 if(MINGW)
     # copy the FFTW3 dll to the executables directory
     # so the executables and tests can find it
     add_custom_command(TARGET fftw_test POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${fftw3_BINARY_DIR}/libfftw3l.dll"
-        "${CMAKE_CURRENT_BINARY_DIR}")
+        "${CMAKE_BINARY_DIR}")
 endif()
+if(WIN32 AND NOT MINGW)
+    # copy the FFTW3 dll to the executables directory
+    # so the executables and tests can find it
+    add_custom_command(TARGET fftw_test POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${fftw_BINARY_DIR}/fftw3l.dll"
+        "${CMAKE_BINARY_DIR}")
+endif()
+
 
 # tests for matrix_profile components
 add_executable(timing_test tests/timing_test.cxx src/timing.cxx)
