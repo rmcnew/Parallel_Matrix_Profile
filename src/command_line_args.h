@@ -13,6 +13,7 @@ struct CommandLineArgs {
         std::string output_file;
         int window_size;
         int input_column;
+
 };
 
 
