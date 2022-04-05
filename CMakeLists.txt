@@ -9,6 +9,14 @@ ProcessorCount(MPI_NUMBER_OF_PROCESSORS)
 project(Group_010 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
+# cmake modules go in cmake directory
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
+# ensure support for C++ 17 filesystem APIs
+if(NOT APPLE)
+find_package(Filesystem REQUIRED)
+endif()
+
 # get GoogleTest from GitHub
 include(FetchContent)
 FetchContent_Declare(
@@ -23,8 +31,10 @@ FetchContent_MakeAvailable(googletest)
 # FFTW3
 FetchContent_Declare(
     fftw3
-    URL https://www.fftw.org/fftw-3.3.10.tar.gz
-    URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
+    # URL https://www.fftw.org/fftw-3.3.10.tar.gz
+    # URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
+    ## www.fftw.org is down; created a temporary mirror
+    URL https://github.com/rmcnew/fftw/releases/download/v3.3.10/fftw-3.3.10.tar.gz
     CMAKE_CACHE_ARGS -DCMAKE_C_FLAGS:STRING=$<$<BOOL:WIN32>:-DFFTW_ENABLE_ALLOCA=0 -DWITH_OUR_MALLOC=1 -DHAVE_SSE2=1 -DHAVE_AVX=1 -DHAVE_AVX2=1 -Wl,-Bdynamic>
 )
 FetchContent_MakeAvailable(fftw3)
@@ -70,7 +80,12 @@ if(MINGW)
     set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ ${CMAKE_CXX_STANDARD_LIBRARIES}")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
 endif()
+
+if(NOT APPLE)
+target_link_libraries(matrix_profile PUBLIC fftw3 ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} csv std::filesystem)
+else()
 target_link_libraries(matrix_profile PUBLIC fftw3 ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} csv)
+endif()
 
 # mpirun target
 add_custom_target(run COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPI_NUMBER_OF_PROCESSORS} ${CMAKE_CURRENT_BINARY_DIR}/matrix_profile) 
@@ -102,7 +117,11 @@ target_link_libraries(timing_test gtest_main)
 
 add_executable(log_test tests/log_test.cxx src/timing.cxx src/log.cxx)
 target_include_directories(log_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
+if(NOT APPLE)
+target_link_libraries(log_test gtest_main std::filesystem)
+else()
 target_link_libraries(log_test gtest_main)
+endif()
 
 add_executable(read_time_series_csv_test tests/read_time_series_csv_test.cxx src/read_time_series_csv.cxx)
 target_include_directories(read_time_series_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${CSV_PARSER_SOURCE_DIR}/single_include)
@@ -121,7 +140,7 @@ add_executable(fourier_transform_test tests/fourier_transform_test.cxx src/fouri
 target_include_directories(fourier_transform_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(fourier_transform_test fftw3 gtest_main)
 
-add_executable(sliding_dot_product_test tests/sliding_dot_product_test.cxx src/sliding_dot_product.cxx)
+add_executable(sliding_dot_product_test tests/sliding_dot_product_test.cxx src/sliding_dot_product.cxx src/fourier_transform.cxx)
 target_include_directories(sliding_dot_product_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(sliding_dot_product_test fftw3 gtest_main)
 
@@ -129,11 +148,11 @@ add_executable(mean_and_standard_deviation_test tests/mean_and_standard_deviatio
 target_include_directories(mean_and_standard_deviation_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
 target_link_libraries(mean_and_standard_deviation_test gtest_main)
 
-add_executable(distance_profile_test tests/distance_profile_test.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/sliding_dot_product.cxx)
+add_executable(distance_profile_test tests/distance_profile_test.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/fourier_transform.cxx src/sliding_dot_product.cxx)
 target_include_directories(distance_profile_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(distance_profile_test fftw3 gtest_main)
 
-add_executable(stamp_test tests/stamp_test.cxx src/stamp.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/sliding_dot_product.cxx)
+add_executable(stamp_test tests/stamp_test.cxx src/stamp.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/fourier_transform.cxx src/sliding_dot_product.cxx)
 target_include_directories(stamp_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(stamp_test fftw3 gtest_main)
 
