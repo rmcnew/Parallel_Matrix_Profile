@@ -9,14 +9,6 @@ ProcessorCount(MPI_NUMBER_OF_PROCESSORS)
 project(Group_010 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
-# cmake modules go in cmake directory
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-
-# ensure support for C++ 17 filesystem APIs
-if(NOT APPLE)
-find_package(Filesystem REQUIRED)
-endif()
-
 # get GoogleTest from GitHub
 include(FetchContent)
 FetchContent_Declare(
@@ -28,20 +20,20 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+# CSV Parser from https://github.com/vincentlaucsb/csv-parser
+add_subdirectory(csv-parser)
+set(CSV_PARSER_SOURCE_DIR "${PROJECT_SOURCE_DIR}/csv-parser")
+
 # FFTW3
 FetchContent_Declare(
     fftw3
-    # URL https://www.fftw.org/fftw-3.3.10.tar.gz
-    # URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
-    ## www.fftw.org is down; created a temporary mirror
-    URL https://github.com/rmcnew/fftw/releases/download/v3.3.10/fftw-3.3.10.tar.gz
+    URL https://www.fftw.org/fftw-3.3.10.tar.gz
+    URL_HASH MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c
     CMAKE_CACHE_ARGS -DCMAKE_C_FLAGS:STRING=$<$<BOOL:WIN32>:-DFFTW_ENABLE_ALLOCA=0 -DWITH_OUR_MALLOC=1 -DHAVE_SSE2=1 -DHAVE_AVX=1 -DHAVE_AVX2=1 -Wl,-Bdynamic>
 )
 FetchContent_MakeAvailable(fftw3)
 
-# CSV Parser from https://github.com/vincentlaucsb/csv-parser
-add_subdirectory(csv-parser)
-set(CSV_PARSER_SOURCE_DIR "${PROJECT_SOURCE_DIR}/csv-parser")
+
 
 # get MPI support package
 find_package(MPI REQUIRED)
@@ -60,12 +52,13 @@ find_package(MPI REQUIRED)
 enable_testing()
 
 ########### programs ###########
-set(MATRIX_PROFILE_SOURCE_DIR "${PROJECT_SOURCE_DIR}/src")
+set(MATRIX_PROFILE_SOURCE_DIR "${PROJECT_SOURCE_DIR}")
 file(GLOB matrix_profile_SRC
     "${MATRIX_PROFILE_SOURCE_DIR}/*.h"
     "${MATRIX_PROFILE_SOURCE_DIR}/*.cxx"
 )
 
+#${matrix_profile_SRC}
 # add the executable
 add_executable(matrix_profile ${matrix_profile_SRC})
 
@@ -80,12 +73,7 @@ if(MINGW)
     set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ ${CMAKE_CXX_STANDARD_LIBRARIES}")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
 endif()
-
-if(NOT APPLE)
-target_link_libraries(matrix_profile PUBLIC fftw3 ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} csv std::filesystem)
-else()
 target_link_libraries(matrix_profile PUBLIC fftw3 ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} csv)
-endif()
 
 # mpirun target
 add_custom_target(run COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPI_NUMBER_OF_PROCESSORS} ${CMAKE_CURRENT_BINARY_DIR}/matrix_profile) 
@@ -111,48 +99,44 @@ if(MINGW)
 endif()
 
 # tests for matrix_profile components
-add_executable(timing_test tests/timing_test.cxx src/timing.cxx)
+add_executable(timing_test tests/timing_test.cxx timing.cxx)
 target_include_directories(timing_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
 target_link_libraries(timing_test gtest_main)
 
-add_executable(log_test tests/log_test.cxx src/timing.cxx src/log.cxx)
+add_executable(log_test tests/log_test.cxx timing.cxx log.cxx)
 target_include_directories(log_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
-if(NOT APPLE)
-target_link_libraries(log_test gtest_main std::filesystem)
-else()
 target_link_libraries(log_test gtest_main)
-endif()
 
-add_executable(read_time_series_csv_test tests/read_time_series_csv_test.cxx src/read_time_series_csv.cxx)
+add_executable(read_time_series_csv_test tests/read_time_series_csv_test.cxx read_time_series_csv.cxx)
 target_include_directories(read_time_series_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${CSV_PARSER_SOURCE_DIR}/single_include)
 target_link_libraries(read_time_series_csv_test csv gtest_main)
 
-add_executable(write_matrix_profile_csv_test tests/write_matrix_profile_csv_test.cxx src/write_matrix_profile_csv.cxx)
+add_executable(write_matrix_profile_csv_test tests/write_matrix_profile_csv_test.cxx write_matrix_profile_csv.cxx)
 target_include_directories(write_matrix_profile_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
 target_link_libraries(write_matrix_profile_csv_test gtest_main)
 
-add_executable(command_line_args_test tests/command_line_args_test.cxx src/command_line_args.cxx)
+add_executable(command_line_args_test tests/command_line_args_test.cxx command_line_args.cxx)
 target_include_directories(command_line_args_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${MPI_CXX_INCLUDE_PATH})
 target_compile_options(command_line_args_test PUBLIC ${MPI_CXX_COMPILE_FLAGS})  
 target_link_libraries(command_line_args_test PUBLIC ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} gtest_main)
 
-add_executable(fourier_transform_test tests/fourier_transform_test.cxx src/fourier_transform.cxx)
+add_executable(fourier_transform_test tests/fourier_transform_test.cxx fourier_transform.cxx)
 target_include_directories(fourier_transform_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(fourier_transform_test fftw3 gtest_main)
 
-add_executable(sliding_dot_product_test tests/sliding_dot_product_test.cxx src/sliding_dot_product.cxx src/fourier_transform.cxx)
+add_executable(sliding_dot_product_test tests/sliding_dot_product_test.cxx sliding_dot_product.cxx)
 target_include_directories(sliding_dot_product_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(sliding_dot_product_test fftw3 gtest_main)
 
-add_executable(mean_and_standard_deviation_test tests/mean_and_standard_deviation_test.cxx src/mean_and_standard_deviation.cxx)
+add_executable(mean_and_standard_deviation_test tests/mean_and_standard_deviation_test.cxx mean_and_standard_deviation.cxx)
 target_include_directories(mean_and_standard_deviation_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
 target_link_libraries(mean_and_standard_deviation_test gtest_main)
 
-add_executable(distance_profile_test tests/distance_profile_test.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/fourier_transform.cxx src/sliding_dot_product.cxx)
+add_executable(distance_profile_test tests/distance_profile_test.cxx distance_profile.cxx mean_and_standard_deviation.cxx sliding_dot_product.cxx)
 target_include_directories(distance_profile_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(distance_profile_test fftw3 gtest_main)
 
-add_executable(stamp_test tests/stamp_test.cxx src/stamp.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/fourier_transform.cxx src/sliding_dot_product.cxx)
+add_executable(stamp_test tests/stamp_test.cxx stamp.cxx distance_profile.cxx mean_and_standard_deviation.cxx sliding_dot_product.cxx)
 target_include_directories(stamp_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(stamp_test fftw3 gtest_main)
 
