@@ -22,9 +22,9 @@ void printMatrixProfile(const std::string& name, const MatrixProfile& mp) {
     //printf("\n%s length: %lu\n", name.c_str(), mp.length);
 }
 
-long argmin(const LongDoubleArray& dp) {
+unsigned long argmin(const LongDoubleArray& dp) {
 	long double minimum_seen = (long double)std::numeric_limits<double>::max();
-	long minimum_index = -1;
+	unsigned long minimum_index = 0;
 
 	for (unsigned long i = 0; i < dp.length; i++) {
 		if (dp.data[i] < minimum_seen) {
@@ -32,15 +32,11 @@ long argmin(const LongDoubleArray& dp) {
 			minimum_index = i;
 		}
 	}
-	if (minimum_seen == (long double)std::numeric_limits<double>::max()) {
-		return (long)-1;
-	} else {
-		return minimum_index;
-	}
+    return minimum_index;
 }
 
 void apply_exclusion_zone(LongDoubleArray& distance_profile, const unsigned long& index, const unsigned long& exclusion_radius) {
-    unsigned long exclusion_start = std::max((index - exclusion_radius), (unsigned long)0);
+    unsigned long exclusion_start = (unsigned long) std::max(((long)index - (long)exclusion_radius), (long)0);
     unsigned long exclusion_stop = std::min((index + exclusion_radius), (distance_profile.length-1));
 
 	for (unsigned long i = exclusion_start; i <= exclusion_stop; i++) {
@@ -51,13 +47,13 @@ void apply_exclusion_zone(LongDoubleArray& distance_profile, const unsigned long
 
 // Element-wise minimum needed for STAMP
 void elementwise_minimum(MatrixProfile& mp, const LongDoubleArray& distance_profile, const unsigned long& index) {
-	long s_index_to_update = argmin(distance_profile);
-	if (s_index_to_update != (long) -1) {
-		unsigned long index_to_update = (unsigned long) s_index_to_update;
-		mp.data[index] = distance_profile.data[index_to_update];
-		mp.index[index] = index_to_update;	
+	unsigned long index_to_update = argmin(distance_profile);
+    long double value = distance_profile.data[index_to_update];
+    if (value < (long double)std::numeric_limits<double>::max()) {
+        mp.data[index] = distance_profile.data[index_to_update];
+        mp.index[index] = index_to_update;	
 		//printMatrixProfile("updated matrix_profile", mp);
-	}
+    }
 }
 
 
@@ -86,17 +82,18 @@ MatrixProfile stamp(const LongDoubleArray& time_series, const int& window_size, 
     unsigned long stop_index = (rank == process_count - 1) ? matrix_profile.length : (start_index + factor);
 
     for (unsigned long index = start_index; index < stop_index; index++) {
-        printf("\n====================\nCalculating distance profile for index: %lu\n", index);
+        //printf("\n====================\nCalculating distance profile for index: %lu\n", index);
         LongDoubleArray query_segment;
         query_segment.data = &(time_series.data[index]);
         query_segment.length = window_size;
         LongDoubleArray distance_profile = calculate_distance_profile(query_segment, time_series);
-		printf("Applying exclusion zone\n");
-		apply_exclusion_zone(distance_profile, index, exclusion_radius);
         //printLongDoubleArray("distance_profile", distance_profile);
-		printf("Performing elementwise_minimum\n");
+		//printf("Applying exclusion zone\n");
+		apply_exclusion_zone(distance_profile, index, exclusion_radius);
+        //printLongDoubleArray("excluded distance_profile", distance_profile);
+		//printf("Performing elementwise_minimum\n");
         elementwise_minimum(matrix_profile, distance_profile, index);
-		printf("Freeing distance_profile.data\n");
+        //printMatrixProfile("updated matrix_profile", matrix_profile);
         free(distance_profile.data);
     }
     return matrix_profile;
