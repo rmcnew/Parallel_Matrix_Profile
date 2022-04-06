@@ -27,8 +27,8 @@ matrix_profile_set = stumpy.stump(time_series, WINDOW_SIZE)
 
 # matrix profile set columns: 0 is matrix profile, 1, is matrix profile indices
 
-matrix_profile = matrix_profile_set[:,0]
+matrix_profile = matrix_profile_set[:,0:2]
 
 # write the matrix profile to output_file
-numpy.savetxt(args.output_file, matrix_profile, delimiter=',')
+numpy.savetxt(args.output_file, matrix_profile, fmt='%e, %d', delimiter=',')
 	
