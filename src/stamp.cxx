@@ -36,7 +36,7 @@ unsigned long argmin(const LongDoubleArray& dp) {
 }
 
 void apply_exclusion_zone(LongDoubleArray& distance_profile, const unsigned long& index, const unsigned long& exclusion_radius) {
-    unsigned long exclusion_start = (unsigned long) std::max(((long)index - (long)exclusion_radius), (long)0);
+    unsigned long exclusion_start = (unsigned long) std::max(((long long)index - (long long)exclusion_radius), (long long)0);
     unsigned long exclusion_stop = std::min((index + exclusion_radius), (distance_profile.length-1));
 
 	for (unsigned long i = exclusion_start; i <= exclusion_stop; i++) {
