@@ -2,9 +2,10 @@
 #include "write_matrix_profile_csv.h"
 
 #include <cstdio>
+#include <cstdlib>
+#include <ctime>
 #include <filesystem>
 #include <fstream>
-#include <random>
 
 #ifdef _WIN32
 #include <windows.h>    // GetModuleFileNameW
@@ -35,9 +36,9 @@ std::filesystem::path get_exe_path() {
 
 
 std::string get_mp_out_filename() {
-	srandom(static_cast<unsigned>(time(NULL)));
+	srand(static_cast<unsigned>(std::time(NULL)));
     std::stringstream filename;
-    filename << "matrix_profile_" << random()  << ".csv";
+    filename << "matrix_profile_" << std::rand()  << ".csv";
     std::filesystem::path mp_out_path = get_exe_path() / filename.str();
     return mp_out_path.string();
 }
