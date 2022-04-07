@@ -150,7 +150,11 @@ target_link_libraries(read_time_series_csv_test csv gtest_main)
 
 add_executable(write_matrix_profile_csv_test tests/write_matrix_profile_csv_test.cxx src/write_matrix_profile_csv.cxx)
 target_include_directories(write_matrix_profile_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
+if(NOT APPLE)
+target_link_libraries(write_matrix_profile_csv_test gtest_main std::filesystem)
+else()
 target_link_libraries(write_matrix_profile_csv_test gtest_main)
+endif()
 
 add_executable(command_line_args_test tests/command_line_args_test.cxx src/command_line_args.cxx)
 target_include_directories(command_line_args_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${MPI_CXX_INCLUDE_PATH})
