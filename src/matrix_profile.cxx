@@ -58,10 +58,23 @@ int main(int argc, char** argv) {
 
     initialize_MPI(argc, argv);
 
-    if (rank == LEADER) {
         command_line_args = parse_command_line_args(args);
-        validate_command_line_args(command_line_args);
-    } 
+        for (auto arg = args.begin(); arg != args.end(); arg++) {
+            if (*arg == "-h" || *arg == "--help") {
+                if (rank == LEADER) {
+                    print_usage();
+                } 
+                MPI_Finalize();
+                exit(EXIT_SUCCESS);
+            }
+        bool valid = validate_command_line_args(command_line_args);
+        if (!valid) {  // if invalid, print usage and exit 
+            if (rank == LEADER) {
+                print_usage();
+            } 
+            MPI_Finalize();
+            exit(EXIT_FAILURE);
+        }
 
     start_timer();
     //start_logging();
