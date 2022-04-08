@@ -49,13 +49,26 @@ int main(int argc, char** argv) {
 
     initialize_MPI(argc, argv);
 
-    command_line_args = parse_command_line_args(args);
-    validate_command_line_args(command_line_args);
+    
+
+    if (rank == LEADER) {
+        command_line_args = parse_command_line_args(args);
+        validate_command_line_args(command_line_args);
+    } 
 
     start_timer();
     //start_logging();
 
+    if (rank == LEADER) {
+        time_series = read_time_series_csv_file(command_line_args.input_file, command_line_args.input_column);
+    } 
+
     // MPI_Bcast time_series to non-Leader processes
+    MPI_Bcast(&(time_series.length), ONE_MESSAGE, MPI_UNSIGNED_LONG, LEADER, MPI_COMM_WORLD);
+    if (rank != LEADER) {
+        time_series.data = (double *) calloc(time_series.length, sizeof(double));
+    }
+    MPI_Bcast(time_series.data, time_series.length, MPI_DOUBLE, LEADER, MPI_COMM_WORLD);
 
     // MPI_Bcast window_size to non-Leader processes
 
