@@ -29,7 +29,6 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 
-
 # FFTW3
 add_subdirectory(fftw3)
 set(fftw3_SOURCE_DIR "${PROJECT_SOURCE_DIR}/fftw3")
@@ -157,9 +156,12 @@ target_link_libraries(write_matrix_profile_csv_test gtest_main)
 endif()
 
 add_executable(command_line_args_test tests/command_line_args_test.cxx src/command_line_args.cxx)
-target_include_directories(command_line_args_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${MPI_CXX_INCLUDE_PATH})
-target_compile_options(command_line_args_test PUBLIC ${MPI_CXX_COMPILE_FLAGS})  
-target_link_libraries(command_line_args_test PUBLIC ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} gtest_main)
+target_include_directories(command_line_args_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
+if(NOT APPLE)
+target_link_libraries(command_line_args_test gtest_main std::filesystem)
+else()
+target_link_libraries(command_line_args_test gtest_main)
+endif()
 
 add_executable(fourier_transform_test tests/fourier_transform_test.cxx src/fourier_transform.cxx)
 target_include_directories(fourier_transform_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
