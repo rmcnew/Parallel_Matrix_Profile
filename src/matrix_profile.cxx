@@ -35,13 +35,6 @@ void initialize_MPI(int argc, char* argv[]) {
 
 }
 
-void merge_matrix_profiles(MatrixProfile& matrix_profile, const MatrixProfile& received, unsigned long start_index, unsigned long stop_index) {
-    for (unsigned long i = start_index; i < stop_index; i++) {
-            matrix_profile.data[i] = received.data[i];
-            matrix_profile.index[i] = received.index[i];
-    }
-}
-
 
 int main(int argc, char** argv) {
     // put command line args in string vector
@@ -96,23 +89,26 @@ int main(int argc, char** argv) {
     // Each non-Leader process MPI_Send's local matrix_profile to Leader
     // Leader MPI_Recv's matrix_profiles from non-Leader processes and updates
     // the global matrix_profile using merge_matrix_profiles
+    unsigned long factor = matrix_profile.length / process_count;
+
     if (rank == LEADER) {
-        MatrixProfile received;
-        received.length = matrix_profile.length;
-        received.data = (long double*) calloc(received.length, sizeof(long double));
-        received.index = (unsigned long*) calloc(received.length, sizeof(unsigned long));
-        unsigned long factor = matrix_profile.length / process_count;
 
         for (int i = 1; i < process_count; i++) {
-            MPI_Recv((void*)received.data, (int)matrix_profile.length, MPI_LONG_DOUBLE, i, MPI_ANY_TAG, MPI_COMM_WORLD, &status); 
-            MPI_Recv((void*)received.index, (int)matrix_profile.length, MPI_UNSIGNED_LONG, i, MPI_ANY_TAG, MPI_COMM_WORLD, &status); 
+            printf("\n================================\nMerging matrix_profile for process %d\n", i);
+            printMatrixProfile("pre-merge matrix_profile: ", matrix_profile);
             unsigned long start_index = i * factor;
             unsigned long stop_index = (i == process_count - 1) ? matrix_profile.length : (start_index + factor);
-            merge_matrix_profiles(matrix_profile, received, start_index, stop_index);
+            int length = (int)stop_index - start_index;
+            MPI_Recv((void*)(&matrix_profile.data[start_index]), length, MPI_LONG_DOUBLE, i, MPI_ANY_TAG, MPI_COMM_WORLD, &status); 
+            MPI_Recv((void*)(&matrix_profile.index[start_index]), length, MPI_UNSIGNED_LONG, i, MPI_ANY_TAG, MPI_COMM_WORLD, &status); 
+            printMatrixProfile("post-merge matrix_profile: ", matrix_profile);
         }
     } else {
-        MPI_Send(matrix_profile.data, (int)matrix_profile.length, MPI_LONG_DOUBLE, LEADER, ONE_MESSAGE, MPI_COMM_WORLD);
-        MPI_Send(matrix_profile.index, (int)matrix_profile.length, MPI_UNSIGNED_LONG, LEADER, ONE_MESSAGE, MPI_COMM_WORLD);
+        unsigned long start_index = rank * factor;
+        unsigned long stop_index = (rank == process_count - 1) ? matrix_profile.length : (start_index + factor);
+        int length = (int)stop_index - start_index;
+        MPI_Send((void*)(&matrix_profile.data[start_index]), length, MPI_LONG_DOUBLE, LEADER, ONE_MESSAGE, MPI_COMM_WORLD);
+        MPI_Send((void*)(&matrix_profile.index[start_index]), length, MPI_UNSIGNED_LONG, LEADER, ONE_MESSAGE, MPI_COMM_WORLD);
     }
 
     // Leader process writes out global matrix_profile to output_file
