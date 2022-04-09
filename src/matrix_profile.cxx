@@ -7,12 +7,12 @@
 #include <vector>
 
 #include "command_line_args.h"
+#include "timing.h"
 #include "log.h"
 #include "read_time_series_csv.h"
-#include "timing.h"
+#include "stamp.h"
 #include "types.h"
 #include "write_matrix_profile_csv.h"
-#include "stamp.h"
 
 #define FALSE 0
 #define TRUE 1
@@ -74,9 +74,10 @@ int main(int argc, char** argv) {
     // MPI_Bcast time_series to non-Leader processes
     MPI_Bcast(&(time_series.length), ONE_MESSAGE, MPI_UNSIGNED_LONG, LEADER, MPI_COMM_WORLD);
     if (rank != LEADER) {
+        //log("Allocating %lu for time_series.length", time_series.length);
         time_series.data = (long double *) calloc(time_series.length, sizeof(long double));
     }
-    MPI_Bcast(time_series.data, (int)time_series.length, MPI_DOUBLE, LEADER, MPI_COMM_WORLD);
+    MPI_Bcast(time_series.data, (int)time_series.length, MPI_LONG_DOUBLE, LEADER, MPI_COMM_WORLD);
 
     // MPI_Bcast window_size to non-Leader processes
     MPI_Bcast(&(command_line_args.window_size), ONE_MESSAGE, MPI_INT, LEADER, MPI_COMM_WORLD);
@@ -94,14 +95,14 @@ int main(int argc, char** argv) {
     if (rank == LEADER) {
 
         for (int i = 1; i < process_count; i++) {
-            printf("\n================================\nMerging matrix_profile for process %d\n", i);
-            printMatrixProfile("pre-merge matrix_profile: ", matrix_profile);
+            //printf("\n================================\nMerging matrix_profile for process %d\n", i);
+            //printMatrixProfile("pre-merge matrix_profile: ", matrix_profile);
             unsigned long start_index = i * factor;
             unsigned long stop_index = (i == process_count - 1) ? matrix_profile.length : (start_index + factor);
             int length = (int)stop_index - start_index;
             MPI_Recv((void*)(&matrix_profile.data[start_index]), length, MPI_LONG_DOUBLE, i, MPI_ANY_TAG, MPI_COMM_WORLD, &status); 
             MPI_Recv((void*)(&matrix_profile.index[start_index]), length, MPI_UNSIGNED_LONG, i, MPI_ANY_TAG, MPI_COMM_WORLD, &status); 
-            printMatrixProfile("post-merge matrix_profile: ", matrix_profile);
+            //printMatrixProfile("post-merge matrix_profile: ", matrix_profile);
         }
     } else {
         unsigned long start_index = rank * factor;

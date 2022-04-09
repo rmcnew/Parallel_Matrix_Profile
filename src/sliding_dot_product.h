@@ -12,6 +12,8 @@ void printDoubleArray(const std::string& name, const DoubleArray& double_array);
 
 void printLongDoubleArray(const std::string& name, const LongDoubleArray& long_double_array);
 
+void logLongDoubleArray(const std::string& name, const LongDoubleArray& long_double_array);
+
 void printComplexArray(const std::string& name, const ComplexArray& complex_array);
 
 #endif // GROUP_010_SLIDING_DOT_PRODUCT_H

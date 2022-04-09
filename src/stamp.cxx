@@ -4,6 +4,8 @@
 #include "distance_profile.h"
 #include "sliding_dot_product.h"
 #include "stamp.h"
+#include "timing.h"
+#include "log.h"
 
 extern int rank;
 extern int process_count;
@@ -20,6 +22,18 @@ void printMatrixProfile(const std::string& name, const MatrixProfile& mp) {
     }
     printf("\n");
     //printf("\n%s length: %lu\n", name.c_str(), mp.length);
+}
+
+void logMatrixProfile(const std::string& name, const MatrixProfile& mp) {
+    log("%s data:  ", name.c_str());
+    for (unsigned long i = 0; i < mp.length; i++) {
+        log("%Le\t", mp.data[i]);
+    }
+    log("\n%s indices:  ", name.c_str());
+    for (unsigned long i = 0; i < mp.length; i++) {
+        log("%lu\t", mp.index[i]);
+    }
+    //log("\n%s length: %lu\n", name.c_str(), mp.length);
 }
 
 unsigned long argmin(const LongDoubleArray& dp) {
@@ -80,21 +94,24 @@ MatrixProfile stamp(const LongDoubleArray& time_series, const int& window_size, 
     unsigned long factor = matrix_profile.length / process_count;
     unsigned long start_index = rank * factor;
     unsigned long stop_index = (rank == process_count - 1) ? matrix_profile.length : (start_index + factor);
+    //log("matrix_profile.length: %lu, factor: %lu, start_index: %lu, stop_index: %lu", matrix_profile.length, factor, start_index, stop_index);
 
     for (unsigned long index = start_index; index < stop_index; index++) {
-        //printf("\n====================\nCalculating distance profile for index: %lu\n", index);
+        //log("\n====================\nCalculating distance profile for index: %lu\n", index);
         LongDoubleArray query_segment;
         query_segment.data = &(time_series.data[index]);
         query_segment.length = window_size;
+        //logLongDoubleArray("query_segment", query_segment);
         LongDoubleArray distance_profile = calculate_distance_profile(query_segment, time_series);
-        //printLongDoubleArray("distance_profile", distance_profile);
-		//printf("Applying exclusion zone\n");
+        //logLongDoubleArray("distance_profile", distance_profile);
+		//log("Applying exclusion zone\n");
 		apply_exclusion_zone(distance_profile, index, exclusion_radius);
-        //printLongDoubleArray("excluded distance_profile", distance_profile);
-		//printf("Performing elementwise_minimum\n");
+        //logLongDoubleArray("excluded distance_profile", distance_profile);
+		//log("Performing elementwise_minimum\n");
         elementwise_minimum(matrix_profile, distance_profile, index);
-        //printMatrixProfile("updated matrix_profile", matrix_profile);
+        //logMatrixProfile("updated matrix_profile", matrix_profile);
         free(distance_profile.data);
     }
+    //logMatrixProfile("End of stamp matrix_profile: ", matrix_profile);
     return matrix_profile;
 }

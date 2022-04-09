@@ -30,5 +30,5 @@ matrix_profile_set = stumpy.stump(time_series, WINDOW_SIZE)
 matrix_profile = matrix_profile_set[:,0:2]
 
 # write the matrix profile to output_file
-numpy.savetxt(args.output_file, matrix_profile, fmt='%e, %d', delimiter=',')
+numpy.savetxt(args.output_file, matrix_profile, fmt='%.18e, %d', delimiter=',')
 	
