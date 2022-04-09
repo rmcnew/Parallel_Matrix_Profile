@@ -2,6 +2,7 @@
 #include "distance_profile.h"
 #include "sliding_dot_product.h"
 
+int rank = 0;
 
 TEST(DistanceProfileTest, test_distance_profile) {
     

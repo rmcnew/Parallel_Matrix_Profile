@@ -6,6 +6,8 @@
 #include "fourier_transform.h"
 #include "sliding_dot_product.h"
 #include "types.h"
+#include "timing.h"
+#include "log.h"
 
 // debugging helper functions
 void printDoubleArray(const std::string& name, const DoubleArray& double_array) {
@@ -24,6 +26,14 @@ void printLongDoubleArray(const std::string& name, const LongDoubleArray& long_d
     }
     printf("\n");
     printf("%s length: %lu\n", name.c_str(), long_double_array.length);
+}
+
+void logLongDoubleArray(const std::string& name, const LongDoubleArray& long_double_array) {
+    log("%s:  ", name.c_str());
+    for (unsigned long i = 0; i < long_double_array.length; i++) {
+        log("%Le\t", long_double_array.data[i]);
+    }
+    log("%s length: %lu\n", name.c_str(), long_double_array.length);
 }
 
 void printComplexArray(const std::string& name, const ComplexArray& complex_array) {
