@@ -22,15 +22,6 @@
 int rank;
 int process_count;    
 
-CommandLineArgs command_line_args;
-
-LongDoubleArray time_series;
-
-MatrixProfile matrix_profile;
-
-LongDoubleArray distance_profile;
-
-MPI_Status status;
 
 // ***** Initializations *****
 void initialize_MPI(int argc, char* argv[]) {
@@ -44,12 +35,10 @@ void initialize_MPI(int argc, char* argv[]) {
 
 }
 
-void merge_matrix_profiles(MatrixProfile& matrix_profile, const MatrixProfile& received) {
-    for (unsigned long i = 0; i < matrix_profile.length; i++) {
-        if (received.data[i] < matrix_profile.data[i]) {
+void merge_matrix_profiles(MatrixProfile& matrix_profile, const MatrixProfile& received, unsigned long start_index, unsigned long stop_index) {
+    for (unsigned long i = start_index; i < stop_index; i++) {
             matrix_profile.data[i] = received.data[i];
             matrix_profile.index[i] = received.index[i];
-        }
     }
 }
 
@@ -60,7 +49,8 @@ int main(int argc, char** argv) {
 
     initialize_MPI(argc, argv);
 
-    command_line_args = parse_command_line_args(args);
+    CommandLineArgs command_line_args = parse_command_line_args(args);
+
     if (command_line_args.help_wanted) {
         if (rank == LEADER) {
             print_usage();
@@ -76,6 +66,10 @@ int main(int argc, char** argv) {
         MPI_Finalize();
         exit(EXIT_FAILURE);
     }
+
+    LongDoubleArray time_series;
+
+    MPI_Status status;
 
     start_timer();
     //start_logging();
@@ -97,7 +91,7 @@ int main(int argc, char** argv) {
     // Each process calculates distance profiles for its portion of the time_series indices 
     // and updates its own local matrix_profile using element-wise minimum (STAMP)
     unsigned long exclusion_radius = (unsigned long) command_line_args.window_size / 4;
-    matrix_profile = stamp(time_series, command_line_args.window_size, exclusion_radius);
+    MatrixProfile matrix_profile = stamp(time_series, command_line_args.window_size, exclusion_radius);
 
     // Each non-Leader process MPI_Send's local matrix_profile to Leader
     // Leader MPI_Recv's matrix_profiles from non-Leader processes and updates
@@ -107,10 +101,14 @@ int main(int argc, char** argv) {
         received.length = matrix_profile.length;
         received.data = (long double*) calloc(received.length, sizeof(long double));
         received.index = (unsigned long*) calloc(received.length, sizeof(unsigned long));
+        unsigned long factor = matrix_profile.length / process_count;
+
         for (int i = 1; i < process_count; i++) {
             MPI_Recv((void*)received.data, (int)matrix_profile.length, MPI_LONG_DOUBLE, i, MPI_ANY_TAG, MPI_COMM_WORLD, &status); 
             MPI_Recv((void*)received.index, (int)matrix_profile.length, MPI_UNSIGNED_LONG, i, MPI_ANY_TAG, MPI_COMM_WORLD, &status); 
-            merge_matrix_profiles(matrix_profile, received);
+            unsigned long start_index = i * factor;
+            unsigned long stop_index = (i == process_count - 1) ? matrix_profile.length : (start_index + factor);
+            merge_matrix_profiles(matrix_profile, received, start_index, stop_index);
         }
     } else {
         MPI_Send(matrix_profile.data, (int)matrix_profile.length, MPI_LONG_DOUBLE, LEADER, ONE_MESSAGE, MPI_COMM_WORLD);
