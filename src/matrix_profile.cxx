@@ -12,6 +12,7 @@
 #include "timing.h"
 #include "types.h"
 #include "write_matrix_profile_csv.h"
+#include "stamp.h"
 
 #define FALSE 0
 #define TRUE 1
@@ -23,12 +24,13 @@ int process_count;
 
 CommandLineArgs command_line_args;
 
-DoubleArray time_series;
+LongDoubleArray time_series;
 
 MatrixProfile matrix_profile;
 
-DoubleArray distance_profile;
+LongDoubleArray distance_profile;
 
+MPI_Status status;
 
 // ***** Initializations *****
 void initialize_MPI(int argc, char* argv[]) {
@@ -58,23 +60,22 @@ int main(int argc, char** argv) {
 
     initialize_MPI(argc, argv);
 
-        command_line_args = parse_command_line_args(args);
-        for (auto arg = args.begin(); arg != args.end(); arg++) {
-            if (*arg == "-h" || *arg == "--help") {
-                if (rank == LEADER) {
-                    print_usage();
-                } 
-                MPI_Finalize();
-                exit(EXIT_SUCCESS);
-            }
-        bool valid = validate_command_line_args(command_line_args);
-        if (!valid) {  // if invalid, print usage and exit 
-            if (rank == LEADER) {
-                print_usage();
-            } 
-            MPI_Finalize();
-            exit(EXIT_FAILURE);
-        }
+    command_line_args = parse_command_line_args(args);
+    if (command_line_args.help_wanted) {
+        if (rank == LEADER) {
+            print_usage();
+        } 
+        MPI_Finalize();
+        exit(EXIT_SUCCESS);
+    }
+    bool valid = validate_command_line_args(command_line_args);
+    if (!valid) {  // if invalid, print usage and exit 
+        if (rank == LEADER) {
+            print_usage();
+        } 
+        MPI_Finalize();
+        exit(EXIT_FAILURE);
+    }
 
     start_timer();
     //start_logging();
@@ -86,7 +87,7 @@ int main(int argc, char** argv) {
     // MPI_Bcast time_series to non-Leader processes
     MPI_Bcast(&(time_series.length), ONE_MESSAGE, MPI_UNSIGNED_LONG, LEADER, MPI_COMM_WORLD);
     if (rank != LEADER) {
-        time_series.data = (double *) calloc(time_series.length, sizeof(double));
+        time_series.data = (long double *) calloc(time_series.length, sizeof(long double));
     }
     MPI_Bcast(time_series.data, (int)time_series.length, MPI_DOUBLE, LEADER, MPI_COMM_WORLD);
 
@@ -107,8 +108,8 @@ int main(int argc, char** argv) {
         received.data = (long double*) calloc(received.length, sizeof(long double));
         received.index = (unsigned long*) calloc(received.length, sizeof(unsigned long));
         for (int i = 1; i < process_count; i++) {
-            MPI_Recv(received.data, (int)matrix_profile.length, MPI_LONG_DOUBLE, i, MPI_ANY_TAG, MPI_COMM_WORLD); 
-            MPI_Recv(received.index, (int)matrix_profile.length, MPI_UNSIGNED_LONG, i, MPI_ANY_TAG, MPI_COMM_WORLD); 
+            MPI_Recv((void*)received.data, (int)matrix_profile.length, MPI_LONG_DOUBLE, i, MPI_ANY_TAG, MPI_COMM_WORLD, &status); 
+            MPI_Recv((void*)received.index, (int)matrix_profile.length, MPI_UNSIGNED_LONG, i, MPI_ANY_TAG, MPI_COMM_WORLD, &status); 
             merge_matrix_profiles(matrix_profile, received);
         }
     } else {

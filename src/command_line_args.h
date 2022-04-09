@@ -8,12 +8,11 @@
 #include <vector>
 
 struct CommandLineArgs {
-    
-        std::string input_file;
-        std::string output_file;
-        int window_size;
-        int input_column;
-
+    bool help_wanted = false;
+    std::string input_file;
+    std::string output_file;
+    int window_size = 10;
+    int input_column = 1;
 };
 
 
