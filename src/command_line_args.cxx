@@ -61,32 +61,21 @@ bool validate_command_line_args(const CommandLineArgs& command_line_args) {
     namespace fs = std::filesystem;
     fs::path f{ command_line_args.input_file };
 
-    if (fs::exists(f)) { leader_print("given input file exists"); }
-    else {
-        leader_print("input file failed");
-        valid = false;
-    }
-
-    // check that output_file can be opened for writing
-    std::ifstream outputFile;
-    fs::path o{ command_line_args.output_file };
-
-    if (fs::exists(o)) { leader_print("given output file exists"); }
-    else {
-        leader_print("output file failed");
+    if (!fs::exists(f)) { 
+        leader_print("input_file not found!  Check path and filename.");
         valid = false;
     }
 
     // if present, window_size must be 2 or greater
     if (command_line_args.window_size <= 1) {
         valid = false;
-        leader_print("window Size failed");
+        leader_print("window_size must be 2 or greater!");
     }
 
     // if present, input_column must be 0 or positive
     if (command_line_args.input_column < 0) {
         valid = false;
-        leader_print("input column failed");
+        leader_print("input_column must be greater than 0!");
     }
 
     if (valid && rank == LEADER) {
