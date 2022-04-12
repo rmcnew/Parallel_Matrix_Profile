@@ -11,9 +11,9 @@
 
 \title{Project Final Report:\\Matrix Profile MPI Implementation}
 
-\author{\IEEEauthorblockN{Richard McNew\IEEEauthorrefmark{1}, Brody Larsen\IEEEauthorrefmark{2}, Feyisa Berisa\IEEEauthorrefmark{3} and Hugh Harps\IEEEauthorrefmark{4}}
+\author{\IEEEauthorblockN{Richard McNew\IEEEauthorrefmark{1} and Brody Larsen\IEEEauthorrefmark{2}}
 \IEEEauthorblockA{Department of Computer Science, Utah State University\\ Logan, Utah, USA\\
-\IEEEauthorrefmark{1}a02077329@usu.edu, \IEEEauthorrefmark{2}a01977457@usu.edu, \IEEEauthorrefmark{3}a01676072@usu.edu, \IEEEauthorrefmark{4}a02222128@usu.edu}
+\IEEEauthorrefmark{1}a02077329@usu.edu, \IEEEauthorrefmark{2}a01977457@usu.edu}
 }
 
 
@@ -35,7 +35,7 @@ The Matrix Profile is an amazing data structure and set of accompanying algorith
 Most data science work is done in Python.  As a result, most Matrix Profile implementations in use today are written in Python\cite{Stumpy} and rely on the NumPy, SciPy, and Numba Python libraries for vector and matrix data types, numerical and scientific algorithms, and fast just-in-time optimizations.  Creating a Matrix Profile implementation using MPI in C++ will offer organizations that use MPI a way to use the Matrix Profile. 
 
 \section{Project Thesis}
-This project will create an MPI implementation of the Matrix Profile in C++.
+This project created an MPI implementation of the Matrix Profile in C++.
 
 \section{Background}
 \subsection{Definitions and Notation}
@@ -109,22 +109,36 @@ The MPI implementation strategy for Matrix Profile is fairly simple for time ser
 There are no simulations for this project.
 
 \section{Tests}
-In order to validate the finished MPI implementation of Matrix Profile in C++ a test suite was created.  The test suite currently consists of nine input time series and their corresponding matrix profiles.  The STUMPY\cite{Stumpy} Python library implementation of the Matrix Profile was used to process the input time series and the output Matrix Profile data structures were captured.  The MPI Matrix Profile implementation will be validated as correct if the output Matrix Profile data structures match those created by the STUMPY Matrix Profile implementation. 
+In order to validate the finished MPI implementation of Matrix Profile in C++ a test suite was created.  The test suite contains nine input time series and their corresponding matrix profiles.  The STUMPY\cite{Stumpy} Python library implementation of the Matrix Profile was used to process the input time series and the output Matrix Profile data structures were captured.  The MPI Matrix Profile implementation was validated as correct because the output Matrix Profile data structures match those created by the STUMPY Matrix Profile implementation. 
 
-Additionally, unit tests are being created to validate that each component of the MPI Matrix Profile implementation works as expected.  We are also utilizing GitHub Actions to perform  multi-platform (Linux, MacOS, and Windows) builds and unit tests before pull requests are allowed to merge into the \texttt{main} branch.  See https://github.com/rmcnew/parallel\_group\_project/actions for more information.
+Additionally, unit tests were created to validate that each component of the MPI Matrix Profile implementation works as expected.  GitHub Actions were also used to perform multi-platform (Linux, MacOS, and Windows) builds and unit tests before pull requests were allowed to merge into the \texttt{main} branch.  See https://github.com/rmcnew/parallel\_group\_project/actions for more information.
+
+\section{Test Data Sets}
+Describe the test data sets and why they were chosen.
+
+\section{Results}
+The MPI Matrix Profile implementation calculated the same results as the STUMPY Matrix Profile implementation with X\% accuracy.
+
+Create a table for these results:
+AAPL\_matrix\_profile.csv average matrix profile percent difference: 0.000000003
+AMZN\_matrix\_profile.csv average matrix profile percent difference: 0.001487219
+AirPassengers\_matrix\_profile.csv average matrix profile percent difference: 0.000000000
+MSFT\_matrix\_profile.csv average matrix profile percent difference: 0.000000005
+TSLA\_matrix\_profile.csv average matrix profile percent difference: 0.398995692
+california\_covid19\_cases\_matrix\_profile.csv average matrix profile percent difference: 0.007563099
+daily\_min\_temperature\_matrix\_profile.csv average matrix profile percent difference: 0.004481254
+us\_gdp\_matrix\_profile.csv average matrix profile percent difference: 0.000000015
+
+Could not find jena\_climate\_2009\_2016\_matrix\_profile.csv
+Put an overall percent difference too
 
 
-\section{Preliminary Results}
-At this time we do not have any preliminary results.  
 
-
-% ** Should the task lists and burndown charts be grouped like this or should
-% ** we place the task list and burndown chart together by sprint, that is,
-% ** Sprint 1 task list and burndown chart, Sprint 2 task list and burndown chart, etc.  ?
+\section{Performance Comparison}
 
 \section{Sprint Tasks}
 
-Figure~\ref{fig:SprintTasks} gives the list of tasks performed thus far, who completed the task, and the number of Story Points for that task.
+Figure~\ref{fig:SprintTasks} gives the list of tasks performed, who completed the task, and the number of Story Points for that task.
 
 \begin{figure*}
 \begin{center}
