@@ -11,9 +11,9 @@
 
 \title{Project Final Report:\\Matrix Profile MPI Implementation}
 
-\author{\IEEEauthorblockN{Richard McNew\IEEEauthorrefmark{1} and Brody Larsen\IEEEauthorrefmark{2}}
+\author{\IEEEauthorblockN{Brody Larsen\IEEEauthorrefmark{1} and Richard McNew\IEEEauthorrefmark{2}}
 \IEEEauthorblockA{Department of Computer Science, Utah State University\\ Logan, Utah, USA\\
-\IEEEauthorrefmark{1}a02077329@usu.edu, \IEEEauthorrefmark{2}a01977457@usu.edu}
+\IEEEauthorrefmark{1}a01977457@usu.edu, \IEEEauthorrefmark{2}a02077329@usu.edu}
 }
 
 
@@ -113,28 +113,65 @@ In order to validate the finished MPI implementation of Matrix Profile in C++ a 
 
 Additionally, unit tests were created to validate that each component of the MPI Matrix Profile implementation works as expected.  GitHub Actions were also used to perform multi-platform (Linux, MacOS, and Windows) builds and unit tests before pull requests were allowed to merge into the \texttt{main} branch.  See https://github.com/rmcnew/parallel\_group\_project/actions for more information.
 
-\section{Test Data Sets}
-Describe the test data sets and why they were chosen.
+\section{Test Datasets}
+Real world time series data was used in the test suite.  Figure~\ref{fig:Input_Time_Series} gives time series test datasets input files and a brief description of each.
+
+\begin{center}
+\begin{figure*}
+\caption{Test Dataset Input Time Series Data}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Filename} & \textbf{Description} \\ \hline \hline
+AAPL.csv & Apple, Inc. stock daily adjusted close price from 2021-02-11 to 2022-02-11 \\ \hline
+AirPassengers.csv &  Monthly airline passengers from 1949 to 1960 \\ \hline
+AMZN.csv & Amazon, Inc. stock daily adjusted close price from 1997-05-15 to 2022-02-10 \\ \hline
+california\_covid19\_cases.csv & Reported positive daily COVID-19 cases in California from 2020-02-01 to 2022-02-09 \\ \hline
+daily\_min\_temperature.csv & Daily minimum temperatures from 1981-01-01 to 1990-12-31  \\ \hline
+jena\_climate\_2009\_2016.csv & Jena, Germany 10-minute interval temperature readings from 2009-01-01 to 2017-01-01  \\ \hline
+MSFT.csv & Microsoft, Inc. stock daily adjusted close price from 2021-02-11 to 2022-02-11 \\ \hline
+TSLA.csv & Tesla, Inc. stock daily adjusted close price from 2021-02-11 to 2022-02-10 \\ \hline
+us\_gdp.csv & United States quarterly Gross Domestic Product (GDP) from 1947-01-01 to 2021-10-01 \\ \hline
+\hline
+\end{tabular}
+\label{fig:Input_Time_Series}
+\end{figure*}
+\end{center}
 
 \section{Results}
-The MPI Matrix Profile implementation calculated the same results as the STUMPY Matrix Profile implementation with X\% accuracy.
 
-Create a table for these results:
-AAPL\_matrix\_profile.csv average matrix profile percent difference: 0.000000003
-AMZN\_matrix\_profile.csv average matrix profile percent difference: 0.001487219
-AirPassengers\_matrix\_profile.csv average matrix profile percent difference: 0.000000000
-MSFT\_matrix\_profile.csv average matrix profile percent difference: 0.000000005
-TSLA\_matrix\_profile.csv average matrix profile percent difference: 0.398995692
-california\_covid19\_cases\_matrix\_profile.csv average matrix profile percent difference: 0.007563099
-daily\_min\_temperature\_matrix\_profile.csv average matrix profile percent difference: 0.004481254
-us\_gdp\_matrix\_profile.csv average matrix profile percent difference: 0.000000015
+The MPI Matrix Profile implementation calculated the same results as the STUMPY Matrix Profile implementation with 99.948\% similarity.  Figure~\ref{fig:Matrix_Profile_Percent_Difference} lists the percent differences for each input time series matrix profile. Figure~\ref{fig:Matrix_Profile_Diff} shows an example side-by-side difference comparison between two output matrix profiles.  The left side is the STUMPY Python library output.  The right side is the MPI Matrix Profile output.
 
-Could not find jena\_climate\_2009\_2016\_matrix\_profile.csv
-Put an overall percent difference too
+\begin{figure}
+\caption{Test Dataset Output Matrix Profile Percent Difference}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Filename} & \textbf{Percent Difference} \\ \hline \hline
+AAPL\_matrix\_profile.csv & 0.000000003 \\ \hline
+AMZN\_matrix\_profile.csv & 0.001487219 \\ \hline
+AirPassengers\_matrix\_profile.csv & 0.000000000 \\ \hline
+california\_covid19\_cases\_matrix\_profile.csv & 0.007563099 \\ \hline
+daily\_min\_temperature\_matrix\_profile.csv & 0.004481254 \\ \hline
+jena\_climate\_2009\_2016\_matrix\_profile.csv & n/a \\ \hline
+MSFT\_matrix\_profile.csv & 0.000000005 \\ \hline
+TSLA\_matrix\_profile.csv & 0.398995692 \\ \hline
+us\_gdp\_matrix\_profile.csv & 0.000000015 \\ \hline \hline
+Overall Percent Difference & 0.0515659109 \\ \hline
+\hline
+\end{tabular}
+\label{fig:Matrix_Profile_Percent_Difference}
+\end{figure}
 
-
+\begin{figure*}
+\begin{center}
+\includegraphics[scale=0.45]{matrix_profile_diff.png}
+\caption{Side-by-side difference comparison between matrix profile output.   Left: STUMPY Python output, Right: MPI C++ output}
+\label{fig:Matrix_Profile_Diff}
+\end{center}
+\end{figure*}
 
 \section{Performance Comparison}
+
+Brody's charts for time taken, memory usage, and CPU utilization go here
 
 \section{Sprint Tasks}
 
