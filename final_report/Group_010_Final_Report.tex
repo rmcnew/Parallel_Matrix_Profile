@@ -19,7 +19,7 @@
 
 \maketitle
 \begin{abstract}
-The Matrix Profile is an amazing data structure and set of accompanying algorithms that have revolutionized time series data mining tasks over the past five years.  Most data science work is done in Python.  As a result, most Matrix Profile implementations in use today are written in Python and rely on the NumPy, SciPy, and Numba Python libraries for vector and matrix data types, numerical and scientific algorithms, and fast just-in-time optimizations.  In this project we create an MPI implementation of the Matrix Profile in C++.
+The Matrix Profile is an amazing data structure and set of accompanying algorithms that have revolutionized time series data mining tasks over the past five years.  Most data science work is done in Python.  As a result, most Matrix Profile implementations in use today are written in Python and rely on the NumPy, SciPy, and Numba Python libraries for vector and matrix data types, numerical and scientific algorithms, and fast just-in-time optimizations.  In this project we created an MPI implementation of the Matrix Profile in C++.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -114,23 +114,23 @@ In order to validate the finished MPI implementation of Matrix Profile in C++ a 
 Additionally, unit tests were created to validate that each component of the MPI Matrix Profile implementation works as expected.  GitHub Actions were also used to perform multi-platform (Linux, MacOS, and Windows) builds and unit tests before pull requests were allowed to merge into the \texttt{main} branch.  See https://github.com/rmcnew/parallel\_group\_project/actions for more information.
 
 \section{Test Datasets}
-Real world time series data was used in the test suite.  Figure~\ref{fig:Input_Time_Series} gives time series test datasets input files and a brief description of each.
+Real world time series data was used in the test suite.  Figure~\ref{fig:Input_Time_Series} gives time series test datasets input files and a brief description of each.  Note that the time series used are relatively small compared to some real world time series data which range up to multiple gigabytes in size for rapidly generated or multivariate data.  The number of datapoints for each time series is given to show its size.
 
 \begin{center}
 \begin{figure*}
 \caption{Test Dataset Input Time Series Data}
-\begin{tabular}{|c|c|}
+\begin{tabular}{|c|c|c|}
 \hline
-\textbf{Filename} & \textbf{Description} \\ \hline \hline
-AAPL.csv & Apple, Inc. stock daily adjusted close price from 2021-02-11 to 2022-02-11 \\ \hline
-AirPassengers.csv &  Monthly airline passengers from 1949 to 1960 \\ \hline
-AMZN.csv & Amazon, Inc. stock daily adjusted close price from 1997-05-15 to 2022-02-10 \\ \hline
-california\_covid19\_cases.csv & Reported positive daily COVID-19 cases in California from 2020-02-01 to 2022-02-09 \\ \hline
-daily\_min\_temperature.csv & Daily minimum temperatures from 1981-01-01 to 1990-12-31  \\ \hline
-jena\_climate\_2009\_2016.csv & Jena, Germany 10-minute interval temperature readings from 2009-01-01 to 2017-01-01  \\ \hline
-MSFT.csv & Microsoft, Inc. stock daily adjusted close price from 2021-02-11 to 2022-02-11 \\ \hline
-TSLA.csv & Tesla, Inc. stock daily adjusted close price from 2021-02-11 to 2022-02-10 \\ \hline
-us\_gdp.csv & United States quarterly Gross Domestic Product (GDP) from 1947-01-01 to 2021-10-01 \\ \hline
+\textbf{Filename} & \textbf{Datapoints} & \textbf{Description} \\ \hline \hline
+AAPL.csv & 254 & Apple stock daily adjusted close price from 2021-02-11 to 2022-02-11 \\ \hline
+AMZN.csv & 6228 & Amazon stock daily adjusted close price from 1997-05-15 to 2022-02-10 \\ \hline
+AirPassengers.csv & 144 & Monthly airline passengers from 1949 to 1960 \\ \hline
+california\_covid19\_cases.csv & 740 & Daily California COVID-19 cases from 2020-02-01 to 2022-02-09 \\ \hline
+daily\_min\_temperature.csv & 3649 & Daily minimum temperatures from 1981-01-01 to 1990-12-31  \\ \hline
+jena\_climate\_2009\_2016.csv & 420551 & Jena, Germany temperatures from 2009-01-01 to 2017-01-01  \\ \hline
+MSFT.csv & 254 & Microsoft stock daily adjusted close price from 2021-02-11 to 2022-02-11 \\ \hline
+TSLA.csv & 253 & Tesla stock daily adjusted close price from 2021-02-11 to 2022-02-10 \\ \hline
+us\_gdp.csv & 300 & US quarterly GDP from 1947-01-01 to 2021-10-01 \\ \hline
 \hline
 \end{tabular}
 \label{fig:Input_Time_Series}
@@ -139,27 +139,33 @@ us\_gdp.csv & United States quarterly Gross Domestic Product (GDP) from 1947-01-
 
 \section{Results}
 
-The MPI Matrix Profile implementation calculated the same results as the STUMPY Matrix Profile implementation with 99.948\% similarity.  Figure~\ref{fig:Matrix_Profile_Percent_Difference} lists the percent differences for each input time series matrix profile. Figure~\ref{fig:Matrix_Profile_Diff} shows an example side-by-side difference comparison between two output matrix profiles.  The left side is the STUMPY Python library output.  The right side is the MPI Matrix Profile output.
+The MPI Matrix Profile implementation calculated the same results as the STUMPY Matrix Profile implementation with 99.95\% similarity.  Figure~\ref{fig:Matrix_Profile_Percent_Similarity} lists the percent similarity for each input time series matrix profile. 
 
-\begin{figure}
-\caption{Test Dataset Output Matrix Profile Percent Difference}
+\begin{center}
+\begin{figure*}
+\caption{Test Dataset Output Matrix Profile Percent Similarity}
 \begin{tabular}{|c|c|}
 \hline
-\textbf{Filename} & \textbf{Percent Difference} \\ \hline \hline
-AAPL\_matrix\_profile.csv & 0.000000003 \\ \hline
-AMZN\_matrix\_profile.csv & 0.001487219 \\ \hline
-AirPassengers\_matrix\_profile.csv & 0.000000000 \\ \hline
-california\_covid19\_cases\_matrix\_profile.csv & 0.007563099 \\ \hline
-daily\_min\_temperature\_matrix\_profile.csv & 0.004481254 \\ \hline
-jena\_climate\_2009\_2016\_matrix\_profile.csv & n/a \\ \hline
-MSFT\_matrix\_profile.csv & 0.000000005 \\ \hline
-TSLA\_matrix\_profile.csv & 0.398995692 \\ \hline
-us\_gdp\_matrix\_profile.csv & 0.000000015 \\ \hline \hline
-Overall Percent Difference & 0.0515659109 \\ \hline
+\textbf{Filename} & \textbf{Percent Similarity} \\ \hline \hline
+AAPL\_matrix\_profile.csv & 99.99 \\ \hline
+AMZN\_matrix\_profile.csv & 99.99 \\ \hline
+AirPassengers\_matrix\_profile.csv & 100.00 \\ \hline
+california\_covid19\_cases\_matrix\_profile.csv & 99.99 \\ \hline
+daily\_min\_temperature\_matrix\_profile.csv & 99.99 \\ \hline
+jena\_climate\_2009\_2016\_matrix\_profile.csv & N/A \\ \hline
+MSFT\_matrix\_profile.csv & 99.99 \\ \hline
+TSLA\_matrix\_profile.csv & 99.60 \\ \hline
+us\_gdp\_matrix\_profile.csv & 99.99 \\ \hline \hline
+Overall Percent Difference & 99.95 \\ \hline
 \hline
 \end{tabular}
-\label{fig:Matrix_Profile_Percent_Difference}
-\end{figure}
+\label{fig:Matrix_Profile_Percent_Similarity}
+\end{figure*}
+\end{center}
+
+The percent similarity calculations were performed as the inverse of the percent difference: $percent\_similarity = \left(1 - \frac{|actual - expected|}{expected}\right) * 100$ where the $expected$ values were those provided by the STUMPY matrix profile output and the $actual$ values were those provided by our MPI matrix profile output. Note that no percent similarity is given for the Jena climate time series because the MPI implementation ran for several days, but never finished.  This is likely due to the size of the time series and the less efficient STAMP algorithm.
+
+Figure~\ref{fig:Matrix_Profile_Diff} shows an example side-by-side difference comparison between two output matrix profiles.  The left side is the STUMPY Python library output.  The right side is the MPI C++ Matrix Profile output.  This figure illustrates how similar most of the matrix profile output was between the STUMPY implementation and our MPI implementation up to many decimal places.
 
 \begin{figure*}
 \begin{center}
@@ -171,33 +177,89 @@ Overall Percent Difference & 0.0515659109 \\ \hline
 
 \section{Performance Comparison}
 
+A simple performance comparison test was run to compare the execution time, CPU utilization, and memory usage between the reference STUMPY Python matrix profile implementation and our MPI C++ implementation.  These performance tests were run on a Intel Core i5-5250 processor with four cores and 16 GB RAM running Debian Linux with version 5.15.23 of the Linux kernel.  Figure~\ref{fig:Execution_Time} displays the execution time in seconds needed for the matrix profile calculation to complete. Figure~\ref{fig:CPU_Utilization} shows the percent CPU utilization that the matrix profile calculation consumed.  Values exceeding 100\% indicate multiple CPU cores were involved.  The maximum possible CPU utilization is 400\% because the processor has four cores. Figure~\ref{fig:Memory_Usage} lists the maximum memory usage in kilobytes that the matrix profile calculation used. 
+
+Note that this comparison is not fair for two reasons:  1) the STUMPY library uses a just-in-time optimized version of the STOMP matrix profile algorithm\cite{Stumpy} whereas our MPI C++ implementation uses the original, less optimized STAMP matrix profile algorithm\cite{MatrixProfile1}, and 2) comparing a serial Python program against a parallelized C++ program is unfair due to the massive difference in language runtimes.  The differences are apparent in the performance comparison results. 
+
+\begin{figure}
+\caption{Execution Time in Seconds}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Input Filename} & \textbf{STUMPY Python} & \textbf{MPI C++} \\ \hline \hline
+AAPL.csv & 15.61 & 0.28 \\ \hline
+AMZN.csv & 16.30 & 7.34 \\ \hline
+AirPassengers.csv & 15.42 & 0.11 \\ \hline
+california\_covid19\_cases.csv & 15.43 & 0.91 \\ \hline
+daily\_min\_temperature.csv & 15.78 & 17.71 \\ \hline
+jena\_climate\_2009\_2016.csv & 2478.40 & N/A \\ \hline
+MSFT.csv & 15.42 & 0.27 \\ \hline
+TSLA.csv & 15.52 & 0.19 \\ \hline
+us\_gdp.csv & 15.56 & 0.24 \\ \hline \hline
+\hline
+\end{tabular}
+\label{fig:Execution_Time}
+\end{figure}
+
+The MPI matrix profile implementation is easily faster than the STUMPY matrix profile implementation for time series with a smaller number of datapoints, but is much slower for larger time series.  This is due to the more efficient STOMP algorithm that STUMPY uses compared to the MPI implementation's STAMP algorithm.  Note that the Jena climate time series is incomplete because our MPI implementation ran for several days but did not finish the computation.
+
+\begin{figure}
+\caption{Percent CPU Utilization}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Input Filename} & \textbf{STUMPY Python} & \textbf{MPI C++} \\ \hline \hline
+AAPL.csv & 106\% & 338\% \\ \hline
+AMZN.csv & 108\% & 398\% \\ \hline
+AirPassengers.csv & 106\% & 308\% \\ \hline
+california\_covid19\_cases.csv & 106\% & 374\% \\ \hline
+daily\_min\_temperature.csv & 107\% & 397\% \\ \hline
+jena\_climate\_2009\_2016.csv & 385\% & N/A \\ \hline
+MSFT.csv & 106\% & 335\% \\ \hline
+TSLA.csv & 106\% & 330\% \\ \hline
+us\_gdp.csv & 106\% & 331\% \\ \hline \hline
+\hline
+\end{tabular}
+\label{fig:CPU_Utilization}
+\end{figure}
+
+For CPU Utilization, the STUMPY implementation only uses one CPU core for most of the time series compared to the MPI implementation using all available CPU cores.  However, STUMPY does use multiple cores for the large Jena climate time series.  This is due to STUMPY using the Numba just-in-time (JIT) compiler Python library that translates a subset of Python and NumPy code into native machine code.  Numba supports automatic conversion of array expressions into parallel code\cite{Numba}, thus the higher CPU utilization for the larger Jena climate time series.  
+
+\begin{figure}
+\caption{Memory Usage in Kilobytes}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Input Filename} & \textbf{STUMPY Python} & \textbf{MPI C++} \\ \hline \hline
+AAPL.csv & 219572 & 13680 \\ \hline
+AMZN.csv & 222204 & 16276 \\ \hline
+AirPassengers.csv & 219816 & 13284 \\ \hline
+california\_covid19\_cases.csv & 220040 & 13280 \\ \hline
+daily\_min\_temperature.csv & 221240 & 14548 \\ \hline
+jena\_climate\_2009\_2016.csv & 431388 & N/A \\ \hline
+MSFT.csv & 220040 & 13580 \\ \hline
+TSLA.csv & 220116 & 13316 \\ \hline
+us\_gdp.csv & 220452 & 13360 \\ \hline \hline
+\hline
+\end{tabular}
+\label{fig:Memory_Usage}
+\end{figure}
+
+The STUMPY matrix profile implementation uses about fifteen times as much memory as our MPI implementation on average.  This is expected given that STUMPY runs in a heavier garbage-collected Python runtime and with a Numba JIT compiler compared to the far more minimal C++ environment and MPI C library.
+
+%The graphs in Figure~\ref{fig:Matrix_Profile_Diff} 
 Brody's charts for time taken, memory usage, and CPU utilization go here
 
-\section{Sprint Tasks}
+%\begin{figure*}
+%\begin{center}
+%\includegraphics[scale=0.45]{matrix_profile_diff.png}
+%\caption{Side-by-side difference comparison between matrix profile output.   Left: STUMPY Python output, Right: MPI C++ output}
+%\label{fig:Matrix_Profile_Diff}
+%\end{center}
+%\end{figure*}
 
-Figure~\ref{fig:SprintTasks} gives the list of tasks performed, who completed the task, and the number of Story Points for that task.
+\section{Conclusion}
+!!! WRITE CONCLUSION HERE !!!
 
-\begin{figure*}
-\begin{center}
-\includegraphics[scale=1.05]{tasks.png}
-\caption{List of tasks, who completed the task and number of Story Points}
-\label{fig:SprintTasks}
-\end{center}
-\end{figure*}
-
-
-\section{Burndown Chart}
-
-Figure~\ref{fig:BurndownChart} shows a burndown chart for the sprints.
-
-\begin{figure*}
-\begin{center}
-\includegraphics[scale=1.05]{Burndown.png}
-\caption{Burndown chart from Sprint 0 to Sprint 5}
-\label{fig:BurndownChart}
-\end{center}
-\end{figure*}
-
+\section{Future Work}
+!!! WRITE FUTURE WORK SECTION HERE !!!
 
 \bibliographystyle{IEEEtran}
 
@@ -218,6 +280,7 @@ Figure~\ref{fig:BurndownChart} shows a burndown chart for the sprints.
 
 \bibitem{Keogh} E. Keogh, \emph{The UCR Matrix Profile Page}, 2021. [Online]. Available: https://www.cs.ucr.edu/~eamonn/MatrixProfile.html.
 
+\bibitem{Numba} \emph{Numba}, 2022. [Online]. Available: https://numba.pydata.org/.
 
 \end{thebibliography}
 
