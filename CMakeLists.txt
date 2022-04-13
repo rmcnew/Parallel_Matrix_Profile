@@ -143,7 +143,7 @@ else()
 target_link_libraries(log_test gtest_main)
 endif()
 
-add_executable(read_time_series_csv_test tests/read_time_series_csv_test.cxx src/read_time_series_csv.cxx)
+add_executable(read_time_series_csv_test tests/read_time_series_csv_test.cxx src/read_time_series_csv.cxx src/timing.cxx src/log.cxx)
 target_include_directories(read_time_series_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${CSV_PARSER_SOURCE_DIR}/single_include)
 target_link_libraries(read_time_series_csv_test csv gtest_main)
 

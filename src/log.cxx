@@ -82,6 +82,7 @@ void log(const char* format, ...) {
 
         double elapsed_time = get_elapsed_time();
         fprintf(log_handle, "%4.6f [Process_%d] %s\n", elapsed_time, rank, log_buffer);
+        fflush(log_handle);
     }
 }
 
