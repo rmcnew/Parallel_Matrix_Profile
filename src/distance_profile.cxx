@@ -3,6 +3,8 @@
 #include "distance_profile.h"
 #include "mean_and_standard_deviation.h"
 #include "sliding_dot_product.h"
+#include "timing.h"
+#include "log.h"
 
 LongDoubleArray to_LongDoubleArray(const DoubleArray& in) {
 
@@ -96,36 +98,36 @@ LongDoubleArray calculate_distance_profile(const LongDoubleArray& query_segment,
 
 	// normalize query_seqment
 	LongDoubleArray normalized_query_segment = normalize(query_segment);   // free1
-	//printf("\nNormalized query segment\n");
-    //printLongDoubleArray("normalized_query_segment", normalized_query_segment);
+	//log("\nNormalized query segment\n");
+    //logLongDoubleArray("normalized_query_segment", normalized_query_segment);
 
 	// calculate sliding_dot_product
     LongDoubleArray dot_product = sliding_dot_product(normalized_query_segment, time_series);  // free2
-    //printf("\nCalculated dot product\n");
-    //printLongDoubleArray("dot_product", dot_product);
+    //log("\nCalculated dot product\n");
+    //logLongDoubleArray("dot_product", dot_product);
 
 	// calculate cumulative sum of time_series
 	LongDoubleArray cumulative_sum_time_series = calculate_cumulative_sum(time_series);  // free3
-    //printf("\nCalculated cumulative sum of time series\n");
-    //printLongDoubleArray("cumulative_sum_time_series", cumulative_sum_time_series);
+    //log("\nCalculated cumulative sum of time series\n");
+    //logLongDoubleArray("cumulative_sum_time_series", cumulative_sum_time_series);
 
 	// calculate cumulative sum of time_series squared
 	LongDoubleArray squared_time_series = square(time_series);  // free4
-    //printf("\nSquared time_series\n");
-    //printLongDoubleArray("squared_time_series", squared_time_series);
+    //log("\nSquared time_series\n");
+    //logLongDoubleArray("squared_time_series", squared_time_series);
 	LongDoubleArray cumulative_sum_time_series_squared = calculate_cumulative_sum(squared_time_series);  // free5
-    //printf("\nCalculated cumlative sum of time series squared\n");
-    //printLongDoubleArray("cumulative_sum_time_series_squared", cumulative_sum_time_series_squared);
+    //log("\nCalculated cumlative sum of time series squared\n");
+    //logLongDoubleArray("cumulative_sum_time_series_squared", cumulative_sum_time_series_squared);
 	
 	// calculate subsequence sum of time_series
 	LongDoubleArray subsequence_sum_time_series = calculate_subsequence_sum(query_segment, time_series, cumulative_sum_time_series);  // free6
-    //printf("\nCalculated subsequence sum of time_series\n");
-    //printLongDoubleArray("subsequence_sum_time_series", subsequence_sum_time_series);
+    //log("\nCalculated subsequence sum of time_series\n");
+    //logLongDoubleArray("subsequence_sum_time_series", subsequence_sum_time_series);
 
 	// calculate subsequence sum of time_series squared
 	LongDoubleArray subsequence_sum_time_series_squared = calculate_subsequence_sum(query_segment, time_series, cumulative_sum_time_series_squared);  // free7
-    //printf("\nCalculated subsequence sum of time_series squared\n");
-    //printLongDoubleArray("subsequence_sum_time_series_squared", subsequence_sum_time_series_squared);
+    //log("\nCalculated subsequence sum of time_series squared\n");
+    //logLongDoubleArray("subsequence_sum_time_series_squared", subsequence_sum_time_series_squared);
 
 	// calculate time_series means
 	LongDoubleArray time_series_means;
@@ -134,13 +136,13 @@ LongDoubleArray calculate_distance_profile(const LongDoubleArray& query_segment,
 	for (unsigned long i = 0; i < time_series_means.length; i++) {
 		time_series_means.data[i] = subsequence_sum_time_series.data[i] / m;
 	}
-    //printf("\nCalculated time_series means\n");
-    //printLongDoubleArray("time_series_means", time_series_means);
+    //log("\nCalculated time_series means\n");
+    //logLongDoubleArray("time_series_means", time_series_means);
 
     // calculate time_series means squared
     LongDoubleArray time_series_means_squared = square(time_series_means); // free11
-    //printf("\nCalculated time_series means squared\n");
-    //printLongDoubleArray("time_series_means_squared", time_series_means_squared);
+    //log("\nCalculated time_series means squared\n");
+    //logLongDoubleArray("time_series_means_squared", time_series_means_squared);
 
 	// calculate time_series variances
 	LongDoubleArray time_series_variances;
@@ -149,8 +151,8 @@ LongDoubleArray calculate_distance_profile(const LongDoubleArray& query_segment,
 	for (unsigned long i = 0; i < time_series_variances.length; i++) {
 		time_series_variances.data[i] = std::fabs( subsequence_sum_time_series_squared.data[i] / m - time_series_means_squared.data[i] );
 	}
-    //printf("\nCalculated time_series variances\n");
-    //printLongDoubleArray("time_series_variances", time_series_variances);
+    //log("\nCalculated time_series variances\n");
+    //logLongDoubleArray("time_series_variances", time_series_variances);
 
 	// calculate time_series standard deviations
 	LongDoubleArray time_series_standard_deviations;
@@ -159,8 +161,8 @@ LongDoubleArray calculate_distance_profile(const LongDoubleArray& query_segment,
 	for (unsigned long i = 0; i < time_series_standard_deviations.length; i++) {
 		time_series_standard_deviations.data[i] = std::sqrt(time_series_variances.data[i]);
 	}	
-    //printf("\nCalculated time_series standard deviations\n");
-    //printLongDoubleArray("time_series_standard_deviations", time_series_standard_deviations);
+    //log("\nCalculated time_series standard deviations\n");
+    //logLongDoubleArray("time_series_standard_deviations", time_series_standard_deviations);
 
     // calculate distance profile
     LongDoubleArray distance_profile;
@@ -175,8 +177,8 @@ LongDoubleArray calculate_distance_profile(const LongDoubleArray& query_segment,
         distance_profile.data[i] = d;
 	}
 
-	//printf("\n\nComputed distance_profile\n");
-    //printLongDoubleArray("distance_profile", distance_profile);
+	//log("\n\nComputed distance_profile\n");
+    //logLongDoubleArray("distance_profile", distance_profile);
 
 	// clean up intermediate data
 	free(normalized_query_segment.data);  // free1

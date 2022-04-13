@@ -29,7 +29,6 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 
-
 # FFTW3
 add_subdirectory(fftw3)
 set(fftw3_SOURCE_DIR "${PROJECT_SOURCE_DIR}/fftw3")
@@ -45,11 +44,11 @@ find_package(MPI REQUIRED)
 
 
 ## uncomment to print all defined variables (useful for debugging)
-get_cmake_property(_variableNames VARIABLES)
-list (SORT _variableNames)
-foreach (_variableName ${_variableNames})
-    message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
+#get_cmake_property(_variableNames VARIABLES)
+#list (SORT _variableNames)
+#foreach (_variableName ${_variableNames})
+#    message(STATUS "${_variableName}=${${_variableName}}")
+#endforeach()
 
 #message(STATUS "Run: ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPI_NUMBER_OF_PROCESSORS} EXECUTABLE ARGS")
 
@@ -150,18 +149,25 @@ target_link_libraries(read_time_series_csv_test csv gtest_main)
 
 add_executable(write_matrix_profile_csv_test tests/write_matrix_profile_csv_test.cxx src/write_matrix_profile_csv.cxx)
 target_include_directories(write_matrix_profile_csv_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
+if(NOT APPLE)
+target_link_libraries(write_matrix_profile_csv_test gtest_main std::filesystem)
+else()
 target_link_libraries(write_matrix_profile_csv_test gtest_main)
+endif()
 
 add_executable(command_line_args_test tests/command_line_args_test.cxx src/command_line_args.cxx)
-target_include_directories(command_line_args_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${MPI_CXX_INCLUDE_PATH})
-target_compile_options(command_line_args_test PUBLIC ${MPI_CXX_COMPILE_FLAGS})  
-target_link_libraries(command_line_args_test PUBLIC ${MPI_CXX_LIBRARIES} ${MPI_CXX_LINK_FLAGS} gtest_main)
+target_include_directories(command_line_args_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
+if(NOT APPLE)
+target_link_libraries(command_line_args_test gtest_main std::filesystem)
+else()
+target_link_libraries(command_line_args_test gtest_main)
+endif()
 
 add_executable(fourier_transform_test tests/fourier_transform_test.cxx src/fourier_transform.cxx)
 target_include_directories(fourier_transform_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(fourier_transform_test fftw3l gtest_main)
 
-add_executable(sliding_dot_product_test tests/sliding_dot_product_test.cxx src/sliding_dot_product.cxx src/fourier_transform.cxx)
+add_executable(sliding_dot_product_test tests/sliding_dot_product_test.cxx src/sliding_dot_product.cxx src/fourier_transform.cxx src/timing.cxx src/log.cxx)
 target_include_directories(sliding_dot_product_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(sliding_dot_product_test fftw3l gtest_main)
 
@@ -169,11 +175,11 @@ add_executable(mean_and_standard_deviation_test tests/mean_and_standard_deviatio
 target_include_directories(mean_and_standard_deviation_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR})
 target_link_libraries(mean_and_standard_deviation_test gtest_main)
 
-add_executable(distance_profile_test tests/distance_profile_test.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/fourier_transform.cxx src/sliding_dot_product.cxx)
+add_executable(distance_profile_test tests/distance_profile_test.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/fourier_transform.cxx src/sliding_dot_product.cxx src/timing.cxx src/log.cxx)
 target_include_directories(distance_profile_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(distance_profile_test fftw3l gtest_main)
 
-add_executable(stamp_test tests/stamp_test.cxx src/stamp.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/fourier_transform.cxx src/sliding_dot_product.cxx)
+add_executable(stamp_test tests/stamp_test.cxx src/stamp.cxx src/distance_profile.cxx src/mean_and_standard_deviation.cxx src/fourier_transform.cxx src/sliding_dot_product.cxx src/timing.cxx src/log.cxx)
 target_include_directories(stamp_test PUBLIC ${MATRIX_PROFILE_SOURCE_DIR} ${fftw3_SOURCE_DIR}/api)
 target_link_libraries(stamp_test fftw3l gtest_main)
 

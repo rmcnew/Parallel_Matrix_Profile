@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include "sliding_dot_product.h"
 
+int rank = 0;
 
 TEST(SlidingDotProductTest, test_sliding_dot_product) {
     

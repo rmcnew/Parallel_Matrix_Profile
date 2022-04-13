@@ -6,7 +6,7 @@
 #include "types.h"
 
 
-DoubleArray read_time_series_csv_file(std::string input_file, int input_column);
+LongDoubleArray read_time_series_csv_file(std::string input_file, int input_column);
 
 
 
