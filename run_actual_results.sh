@@ -1,0 +1,12 @@
+#!/bin/sh
+cd build
+/usr/bin/time -f '%M' -v mpirun -n 4 -f ../src/hostfile ./matrix_profile --input-file ../test_data/input_time_series/AAPL.csv --output-file ../actual_results/AAPL-matrix_profile.csv 2> ../actual_results/performance/AAPL-matrix_profile-perf.txt
+/usr/bin/time -f '%M' -v mpirun -n 4 -f ../src/hostfile ./matrix_profile --input-file ../test_data/input_time_series/AMZN.csv --output-file ../actual_results/AMZN-matrix_profile.csv 2> ../actual_results/performance/AMZN-matrix_profile-perf.txt
+/usr/bin/time -f '%M' -v mpirun -n 4 -f ../src/hostfile ./matrix_profile --input-file ../test_data/input_time_series/AirPassengers.csv --output-file ../actual_results/AirPassengers-matrix_profile.csv 2> ../actual_results/performance/AirPassengers-matrix_profile-perf.txt
+/usr/bin/time -f '%M' -v mpirun -n 4 -f ../src/hostfile ./matrix_profile --input-file ../test_data/input_time_series/california_covid19_cases.csv --output-file ../actual_results/california_covid19_cases-matrix_profile.csv 2> ../actual_results/performance/california_covid19_cases-matrix_profile-perf.txt
+/usr/bin/time -f '%M' -v mpirun -n 4 -f ../src/hostfile ./matrix_profile --input-file ../test_data/input_time_series/daily_min_temperature.csv --output-file ../actual_results/daily_min_temperature-matrix_profile.csv 2> ../actual_results/performance/daily_min_temperature-matrix_profile-perf.txt
+/usr/bin/time -f '%M' -v mpirun -n 4 -f ../src/hostfile ./matrix_profile --input-file ../test_data/input_time_series/MSFT.csv --output-file ../actual_results/MSFT-matrix_profile.csv 2> ../actual_results/performance/MSFT-matrix_profile-perf.txt
+/usr/bin/time -f '%M' -v mpirun -n 4 -f ../src/hostfile ./matrix_profile --input-file ../test_data/input_time_series/TSLA.csv --output-file ../actual_results/TSLA-matrix_profile.csv 2> ../actual_results/performance/TSLA-matrix_profile-perf.txt
+/usr/bin/time -f '%M' -v mpirun -n 4 -f ../src/hostfile ./matrix_profile --input-file ../test_data/input_time_series/us_gdp.csv --output-file ../actual_results/us_gdp-matrix_profile.csv 2> ../actual_results/performance/us_gdp-matrix_profile-perf.txt
+#/usr/bin/time -f '%M' -v mpirun -n 4 -f ../src/hostfile ./matrix_profile --input-file ../test_data/input_time_series/jena_climate_2009_2016.csv --output-file ../actual_results/jena_climate_2009_2016-matrix_profile.csv 2> ../actual_results/performance/jena_climate_2009_2016-matrix_profile-perf.txt
+
