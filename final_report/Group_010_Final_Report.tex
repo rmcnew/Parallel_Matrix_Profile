@@ -165,6 +165,7 @@ Overall Percent Difference & 99.95 \\ \hline
 
 The percent similarity calculations were performed as the inverse of the percent difference: $percent\_similarity = \left(1 - \frac{|actual - expected|}{expected}\right) * 100$ where the $expected$ values were those provided by the STUMPY matrix profile output and the $actual$ values were those provided by our MPI matrix profile output. Note that no percent similarity is given for the Jena climate time series because the MPI implementation ran for several days, but never finished.  This is likely due to the size of the time series and the less efficient STAMP algorithm.
 
+
 Figure~\ref{fig:Matrix_Profile_Diff} shows an example side-by-side difference comparison between two output matrix profiles.  The left side is the STUMPY Python library output.  The right side is the MPI C++ Matrix Profile output.  This figure illustrates how similar most of the matrix profile output was between the STUMPY implementation and our MPI implementation up to many decimal places.
 
 \begin{figure*}
@@ -195,7 +196,6 @@ jena\_climate\_2009\_2016.csv & 2478.40 & N/A \\ \hline
 MSFT.csv & 15.42 & 0.27 \\ \hline
 TSLA.csv & 15.52 & 0.19 \\ \hline
 us\_gdp.csv & 15.56 & 0.24 \\ \hline \hline
-\hline
 \end{tabular}
 \label{fig:Execution_Time}
 \end{figure}
@@ -216,7 +216,6 @@ jena\_climate\_2009\_2016.csv & 385\% & N/A \\ \hline
 MSFT.csv & 106\% & 335\% \\ \hline
 TSLA.csv & 106\% & 330\% \\ \hline
 us\_gdp.csv & 106\% & 331\% \\ \hline \hline
-\hline
 \end{tabular}
 \label{fig:CPU_Utilization}
 \end{figure}
@@ -237,23 +236,42 @@ jena\_climate\_2009\_2016.csv & 431388 & N/A \\ \hline
 MSFT.csv & 220040 & 13580 \\ \hline
 TSLA.csv & 220116 & 13316 \\ \hline
 us\_gdp.csv & 220452 & 13360 \\ \hline \hline
-\hline
 \end{tabular}
 \label{fig:Memory_Usage}
 \end{figure}
 
 The STUMPY matrix profile implementation uses about fifteen times as much memory as our MPI implementation on average.  This is expected given that STUMPY runs in a heavier garbage-collected Python runtime and with a Numba JIT compiler compared to the far more minimal C++ environment and MPI C library.
 
-%The graphs in Figure~\ref{fig:Matrix_Profile_Diff} 
-Brody's charts for time taken, memory usage, and CPU utilization go here
 
-%\begin{figure*}
-%\begin{center}
-%\includegraphics[scale=0.45]{matrix_profile_diff.png}
-%\caption{Side-by-side difference comparison between matrix profile output.   Left: STUMPY Python output, Right: MPI C++ output}
-%\label{fig:Matrix_Profile_Diff}
-%\end{center}
-%\end{figure*}
+Figure~\ref{fig:Time_Graph} Shows the how many seconds it took the Python and C++ code to complete time series.
+
+\begin{figure*}
+\begin{center}
+\includegraphics[scale=1.05]{Time.png}
+\caption{Compares how many seconds it took the Python code and C++ code to complete time series calculations}
+\label{fig:Time_Graph}
+\end{center}
+\end{figure*}
+
+Figure~\ref{fig:CPU_Graph} Shows the CPU usage percentage. 100\% means 1 core, 300\% means 3 cores were used.
+
+\begin{figure*}
+\begin{center}
+\includegraphics[scale=1.05]{CPU.png}
+\caption{CPU usage percentage. 100\% means 1 core, 300\% means 3 cores were used.}
+\label{fig:CPU_Graph}
+\end{center}
+\end{figure*}
+
+Figure~\ref{fig:Memory_Graph} Shows the amount of kilobytes that the Python and C++ programs used.
+
+\begin{figure*}
+\begin{center}
+\includegraphics[scale=1.05]{Memory.png}
+\caption{The amount of kilobytes the Python and C++ programs used.}
+\label{fig:Memory_Graph}
+\end{center}
+\end{figure*}
 
 \section{Conclusion}
 !!! WRITE CONCLUSION HERE !!!
@@ -261,10 +279,11 @@ Brody's charts for time taken, memory usage, and CPU utilization go here
 \section{Future Work}
 !!! WRITE FUTURE WORK SECTION HERE !!!
 
+
 \bibliographystyle{IEEEtran}
 
 % number is the number of reference labels
-\begin{thebibliography}{7}  
+\begin{thebibliography}{8}  
 
 \bibitem{MatrixProfile1} C. M. Yeh et al., "Matrix Profile I: All Pairs Similarity Joins for Time Series: A Unifying View That Includes Motifs, Discords and Shapelets," 2016 IEEE 16th International Conference on Data Mining (ICDM), 2016, pp. 1317-1322, doi: 10.1109/ICDM.2016.0179.
 
