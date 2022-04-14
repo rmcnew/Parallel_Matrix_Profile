@@ -91,13 +91,13 @@ MatrixProfile stamp(const LongDoubleArray& time_series, const int& window_size, 
     //printMatrixProfile("matrix_profile initialized", matrix_profile);
 
     // Step 3:  Each process handles its time series segment indices
-    unsigned long factor = matrix_profile.length / process_count;
-    unsigned long start_index = rank * factor;
+    unsigned long factor = matrix_profile.length / (unsigned long)process_count;
+    unsigned long start_index = (unsigned long)rank * factor;
     unsigned long stop_index = (rank == process_count - 1) ? matrix_profile.length : (start_index + factor);
     //log("matrix_profile.length: %lu, factor: %lu, start_index: %lu, stop_index: %lu", matrix_profile.length, factor, start_index, stop_index);
 
     for (unsigned long index = start_index; index < stop_index; index++) {
-        //log("\n====================\nCalculating distance profile for index: %lu\n", index);
+        log("Calculating distance profile for index: %lu\n", index);
         LongDoubleArray query_segment;
         query_segment.data = &(time_series.data[index]);
         query_segment.length = window_size;
@@ -112,6 +112,6 @@ MatrixProfile stamp(const LongDoubleArray& time_series, const int& window_size, 
         //logMatrixProfile("updated matrix_profile", matrix_profile);
         free(distance_profile.data);
     }
-    //logMatrixProfile("End of stamp matrix_profile: ", matrix_profile);
+    logMatrixProfile("End of stamp matrix_profile: ", matrix_profile);
     return matrix_profile;
 }

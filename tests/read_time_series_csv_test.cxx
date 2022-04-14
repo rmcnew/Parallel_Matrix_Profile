@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "read_time_series_csv.h"
 
+int rank = 0;
 
 TEST(ReadTimeSeriesCsvTest, test_read_time_series_csv) {
     
