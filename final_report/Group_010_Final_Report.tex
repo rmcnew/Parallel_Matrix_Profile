@@ -35,7 +35,7 @@ The Matrix Profile is an amazing data structure and set of accompanying algorith
 Most data science work is done in Python.  As a result, most Matrix Profile implementations in use today are written in Python\cite{Stumpy} and rely on the NumPy, SciPy, and Numba Python libraries for vector and matrix data types, numerical and scientific algorithms, and fast just-in-time optimizations.  Creating a Matrix Profile implementation using MPI in C++ will offer organizations that use MPI a way to use the Matrix Profile. 
 
 \section{Project Thesis}
-This project created an MPI implementation of the Matrix Profile in C++.
+In this project we created a minimal MPI-based implementation of the Matrix Profile in C++.
 
 \section{Background}
 \subsection{Definitions and Notation}
@@ -116,8 +116,8 @@ Additionally, unit tests were created to validate that each component of the MPI
 \section{Test Datasets}
 Real world time series data was used in the test suite.  Figure~\ref{fig:Input_Time_Series} gives time series test datasets input files and a brief description of each.  Note that the time series used are relatively small compared to some real world time series data which range up to multiple gigabytes in size for rapidly generated or multivariate data.  The number of datapoints for each time series is given to show its size.
 
-\begin{center}
 \begin{figure*}
+\begin{center}
 \caption{Test Dataset Input Time Series Data}
 \begin{tabular}{|c|c|c|}
 \hline
@@ -134,15 +134,15 @@ us\_gdp.csv & 300 & US quarterly GDP from 1947-01-01 to 2021-10-01 \\ \hline
 \hline
 \end{tabular}
 \label{fig:Input_Time_Series}
-\end{figure*}
 \end{center}
+\end{figure*}
 
 \section{Results}
 
 The MPI Matrix Profile implementation calculated the same results as the STUMPY Matrix Profile implementation with 99.95\% similarity.  Figure~\ref{fig:Matrix_Profile_Percent_Similarity} lists the percent similarity for each input time series matrix profile. 
 
-\begin{center}
 \begin{figure*}
+\begin{center}
 \caption{Test Dataset Output Matrix Profile Percent Similarity}
 \begin{tabular}{|c|c|}
 \hline
@@ -160,17 +160,16 @@ Overall Percent Difference & 99.95 \\ \hline
 \hline
 \end{tabular}
 \label{fig:Matrix_Profile_Percent_Similarity}
-\end{figure*}
 \end{center}
+\end{figure*}
 
 The percent similarity calculations were performed as the inverse of the percent difference: $percent\_similarity = \left(1 - \frac{|actual - expected|}{expected}\right) * 100$ where the $expected$ values were those provided by the STUMPY matrix profile output and the $actual$ values were those provided by our MPI matrix profile output. Note that no percent similarity is given for the Jena climate time series because the MPI implementation ran for several days, but never finished.  This is likely due to the size of the time series and the less efficient STAMP algorithm.
-
 
 Figure~\ref{fig:Matrix_Profile_Diff} shows an example side-by-side difference comparison between two output matrix profiles.  The left side is the STUMPY Python library output.  The right side is the MPI C++ Matrix Profile output.  This figure illustrates how similar most of the matrix profile output was between the STUMPY implementation and our MPI implementation up to many decimal places.
 
 \begin{figure*}
 \begin{center}
-\includegraphics[scale=0.45]{matrix_profile_diff.png}
+\includegraphics[scale=0.42]{matrix_profile_diff.png}
 \caption{Side-by-side difference comparison between matrix profile output.   Left: STUMPY Python output, Right: MPI C++ output}
 \label{fig:Matrix_Profile_Diff}
 \end{center}
@@ -182,27 +181,30 @@ A simple performance comparison test was run to compare the execution time, CPU 
 
 Note that this comparison is not fair for two reasons:  1) the STUMPY library uses a just-in-time optimized version of the STOMP matrix profile algorithm\cite{Stumpy} whereas our MPI C++ implementation uses the original, less optimized STAMP matrix profile algorithm\cite{MatrixProfile1}, and 2) comparing a serial Python program against a parallelized C++ program is unfair due to the massive difference in language runtimes.  The differences are apparent in the performance comparison results. 
 
-\begin{figure}
+\begin{figure*}
+\begin{center}
 \caption{Execution Time in Seconds}
 \begin{tabular}{|c|c|c|}
 \hline
 \textbf{Input Filename} & \textbf{STUMPY Python} & \textbf{MPI C++} \\ \hline \hline
-AAPL.csv & 15.61 & 0.28 \\ \hline
-AMZN.csv & 16.30 & 7.34 \\ \hline
-AirPassengers.csv & 15.42 & 0.11 \\ \hline
-california\_covid19\_cases.csv & 15.43 & 0.91 \\ \hline
-daily\_min\_temperature.csv & 15.78 & 17.71 \\ \hline
-jena\_climate\_2009\_2016.csv & 2478.40 & N/A \\ \hline
-MSFT.csv & 15.42 & 0.27 \\ \hline
-TSLA.csv & 15.52 & 0.19 \\ \hline
-us\_gdp.csv & 15.56 & 0.24 \\ \hline \hline
+AAPL.csv & 15.27 & 0.09 \\ \hline
+AMZN.csv & 15.67 & 21.70 \\ \hline
+AirPassengers.csv & 15.14 & 0.04 \\ \hline
+california\_covid19\_cases.csv & 15.13 & 0.24 \\ \hline
+daily\_min\_temperature.csv & 15.38 & 5.19 \\ \hline
+jena\_climate\_2009\_2016.csv & 642.67 & N/A \\ \hline
+MSFT.csv & 15.14 & 0.08 \\ \hline
+TSLA.csv & 15.22 & 0.07 \\ \hline
+us\_gdp.csv & 15.27 & 0.08 \\ \hline \hline
 \end{tabular}
 \label{fig:Execution_Time}
-\end{figure}
+\end{center}
+\end{figure*}
 
 The MPI matrix profile implementation is easily faster than the STUMPY matrix profile implementation for time series with a smaller number of datapoints, but is much slower for larger time series.  This is due to the more efficient STOMP algorithm that STUMPY uses compared to the MPI implementation's STAMP algorithm.  Note that the Jena climate time series is incomplete because our MPI implementation ran for several days but did not finish the computation.
 
-\begin{figure}
+\begin{figure*}
+\begin{center}
 \caption{Percent CPU Utilization}
 \begin{tabular}{|c|c|c|}
 \hline
@@ -218,11 +220,13 @@ TSLA.csv & 106\% & 330\% \\ \hline
 us\_gdp.csv & 106\% & 331\% \\ \hline \hline
 \end{tabular}
 \label{fig:CPU_Utilization}
-\end{figure}
+\end{center}
+\end{figure*}
 
 For CPU Utilization, the STUMPY implementation only uses one CPU core for most of the time series compared to the MPI implementation using all available CPU cores.  However, STUMPY does use multiple cores for the large Jena climate time series.  This is due to STUMPY using the Numba just-in-time (JIT) compiler Python library that translates a subset of Python and NumPy code into native machine code.  Numba supports automatic conversion of array expressions into parallel code\cite{Numba}, thus the higher CPU utilization for the larger Jena climate time series.  
 
-\begin{figure}
+\begin{figure*}
+\begin{center}
 \caption{Memory Usage in Kilobytes}
 \begin{tabular}{|c|c|c|}
 \hline
@@ -238,22 +242,22 @@ TSLA.csv & 220116 & 13316 \\ \hline
 us\_gdp.csv & 220452 & 13360 \\ \hline \hline
 \end{tabular}
 \label{fig:Memory_Usage}
-\end{figure}
+\end{center}
+\end{figure*}
 
 The STUMPY matrix profile implementation uses about fifteen times as much memory as our MPI implementation on average.  This is expected given that STUMPY runs in a heavier garbage-collected Python runtime and with a Numba JIT compiler compared to the far more minimal C++ environment and MPI C library.
 
-
-Figure~\ref{fig:Time_Graph} Shows the how many seconds it took the Python and C++ code to complete time series.
+Figure~\ref{fig:Time_Graph} displays how many seconds it took the Python and C++ code to complete the matrix profile calculations.
 
 \begin{figure*}
 \begin{center}
 \includegraphics[scale=1.05]{Time.png}
-\caption{Compares how many seconds it took the Python code and C++ code to complete time series calculations}
+\caption{Compares how many seconds it took the Python code and C++ code to complete the matrix profile calculations}
 \label{fig:Time_Graph}
 \end{center}
 \end{figure*}
 
-Figure~\ref{fig:CPU_Graph} Shows the CPU usage percentage. 100\% means 1 core, 300\% means 3 cores were used.
+Figure~\ref{fig:CPU_Graph} gives the CPU usage percentage. 100\% means 1 core, 300\% means 3 cores were used.
 
 \begin{figure*}
 \begin{center}
@@ -263,22 +267,33 @@ Figure~\ref{fig:CPU_Graph} Shows the CPU usage percentage. 100\% means 1 core, 3
 \end{center}
 \end{figure*}
 
-Figure~\ref{fig:Memory_Graph} Shows the amount of kilobytes that the Python and C++ programs used.
+Figure~\ref{fig:Memory_Graph} shows the amount of memory in kilobytes that the Python and C++ programs used.
 
 \begin{figure*}
 \begin{center}
 \includegraphics[scale=1.05]{Memory.png}
-\caption{The amount of kilobytes the Python and C++ programs used.}
+\caption{The amount of memory in kilobytes the Python and C++ programs used.}
 \label{fig:Memory_Graph}
 \end{center}
 \end{figure*}
 
 \section{Conclusion}
-!!! WRITE CONCLUSION HERE !!!
+In this project we created a minimal MPI-based implementation of the Matrix Profile in C++.  It works very well for time series with a small number of datapoints, but does not scale up well to larger time series.  This is primarily due to our use of the original STAMP algorithm which is much slower than the STOMP and SCRIMP++ algorithms. Figure~\ref{fig:matrix_profile_algorithms_compared} gives a graphical comparison of the STAMP algorithm's performance against the STOMP and SCRIMP++ algorithms.  While the STOMP and SCRIMP++ algorithms are much more performant compared to STAMP, they are also much more complex to implement which is why we chose to implement STAMP for this project. 
+
+\begin{figure*}
+\begin{center}
+\includegraphics[scale=0.85]{matrix_profile_algorithms_compared.png}
+\caption{Matrix Profile algorithms convergence times compared}
+\label{fig:matrix_profile_algorithms_compared}
+\end{center}
+\end{figure*}
 
 \section{Future Work}
-!!! WRITE FUTURE WORK SECTION HERE !!!
+The Matrix Profile is an exciting area of research for time series data mining.  Most of the work is focused on mining massive time series datasets as fast as possible in cloud computing environments.  Considering how versatile the Matrix Profile is and how ubiqitous multicore processors are, there is likely a need for a fast, resource-frugal implementation of the Matrix Profile for use in portable and embedded devices such as on-board vehicle computers, field diagnostic medical equipment, smartphones, and industrial control computers.  
 
+An MPI-based implementation similar to (or perhaps derived from) our implementation could be created to use a more optimal Matrix Profile algorithm such as SCRIMP++ and outfitted with a focused domain-specific motif search set in order to quickly search an incoming data stream (time series) for matching subsequences of interest.  For example, an on-board vehicle computer could use sensor data to rapidly recognize a hazardous road condition and alert the driver.  Field diagnostic medical devices could aid doctors or first responders in quickly finding life-threatening diseases so that the proper care can be given with minimal delay.  Smartphones could gain even more capabilities with on-device sensors that identify emergencies and request help (e.g. active shooter situations, explosions, car accidents, et cetera).  Industrial control computers could better respond to their environment by sensing failure conditions and shutting down production to prevent injuries and loss of expensive equipment.  
+
+There are many possible applications for a fast, resource-frugal, parallel implementation of the Matrix Profile.  This project showed that a minimal MPI Matrix Profile implementation is possible and can be made practical with more effort.
 
 \bibliographystyle{IEEEtran}
 
