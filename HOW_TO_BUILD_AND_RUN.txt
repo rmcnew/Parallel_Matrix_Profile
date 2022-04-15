@@ -1,0 +1,22 @@
+Building MPI Matrix Profile requires CMake, a C / C++ compiler, and MPI.
+
+If you do not have CMake installed, please install it:  https://cmake.org/install/
+
+Build the project using CMake for your operating system:  https://preshing.com/20170511/how-to-build-a-cmake-based-project/
+
+For my Debian Linux system, I run the following commands to build:
+1) cmake -B build -DCMAKE_BUILD_TYPE=Release 
+2) cmake --build build --config Release 
+
+After the build completes the binaries are found in the ./build directory.
+
+
+To run the matrix_profile:
+
+1) cd ./build
+2) mpirun -n 4 -f ../src/hostfile ./matrix_profile --input-file ../test_data/input_time_series/AAPL.csv --output-file AAPL-matrix_profile.csv
+
+The completed Matrix Profile is given in the output file:  AAPL-matrix_profile.csv
+
+
+
