@@ -8,16 +8,21 @@ struct DoubleArray {
     unsigned long length = 0;
 };
 
+struct LongDoubleArray {
+    long double* data = nullptr;
+    unsigned long length = 0;
+};
+
 
 struct MatrixProfile {
-    double* data = nullptr;
+    long double* data = nullptr;
     unsigned long length = 0;
     unsigned long* index = nullptr;
 };
 
 
 struct ComplexArray {
-    std::complex<double>* data = nullptr;
+    std::complex<long double>* data = nullptr;
     unsigned long length = 0;
 };
 

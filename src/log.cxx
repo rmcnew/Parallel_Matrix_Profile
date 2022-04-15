@@ -73,13 +73,16 @@ void stop_logging() {
 
 
 void log(const char* format, ...) {
-    char log_buffer[LOG_BUFFER_SIZE];
-    va_list args;
-    va_start(args, format);
-    vsnprintf(log_buffer, LOG_BUFFER_SIZE, format, args);
-    va_end(args);
+    if (log_handle != nullptr) {
+        char log_buffer[LOG_BUFFER_SIZE];
+        va_list args;
+        va_start(args, format);
+        vsnprintf(log_buffer, LOG_BUFFER_SIZE, format, args);
+        va_end(args);
 
-    double elapsed_time = get_elapsed_time();
-    fprintf(log_handle, "%4.6f [Process_%d] %s\n", elapsed_time, rank, log_buffer);
+        double elapsed_time = get_elapsed_time();
+        fprintf(log_handle, "%4.6f [Process_%d] %s\n", elapsed_time, rank, log_buffer);
+        fflush(log_handle);
+    }
 }
 

@@ -5,7 +5,7 @@
 
 #include "types.h"
 
-void write_matrix_profile_csv(std::string output_file, MatrixProfile matrix_profile);
+void write_matrix_profile_csv(const std::string& output_file, const MatrixProfile& matrix_profile);
 
 #endif // GROUP_010_WRITE_MATRIX_PROFILE_CSV_H
 
